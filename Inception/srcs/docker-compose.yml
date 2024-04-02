@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  mariadb:
+    build: requirements/mariadb
+    image: mariadb
+    container_name: mariadb
+    env_file: .env
+    retart: on-failure
+    volumes:
+      - mariadb:/var/lib/mysql
+    networks:
+      - inception
+  wordpress:
+    build: requirements:wordpress
+    image: wordpress
+    container_name: wordpress
+    env_file: .env
+    restart: on-failure
+    networks:
+      - inception
+    volumes:
+      - wordpress:/var/www/wordpress
+    depends_on:
+      - mariadb
+  nginx:
+    build: requirements/nginx
+    image: nginx
+    container_name: nginx
+    env_file: .env
+    restart: on-failure
+    networks:
+      - inception
+    volumes:
+      - wordpress:/var/www/wordpress
+    depends_on:
+      - wordpress
+    ports:
+      - "443:443"
+
+networks:
+  inception:
+    driver: bridge
+
+volumes:
+  mariadb:
+    driver_opts:
+      type : none
+      o: bind
+      device: /home/itopchu/data/mariadb
+  wordpress:
+    driver_opts:
+      type : none
+      o: bind
+      device: /home/itopchu/data/wordpress

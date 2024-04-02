@@ -1,0 +1,44 @@
+Virtual machine is 'debian-11.8.0-amd64-netinst'
+
+  System:
+    40GB disk size
+    8GB RAM
+    4CPU
+    Skip unattended installation
+    -Floppy +Hard Disk +Network
+
+  Display:
+    memory 64MB, VMSVA, 3D Acceleration
+
+  Network:
+    Forwarding:
+      HTTP	80	80
+      HTTPS	443	443
+      SSH		42	42
+
+  Non-Graphical installation:
+    Language and region selection:
+      depends on you
+    Keyboard:
+      depends on you
+    Hostname:
+      can leave default
+    User name:
+      own 42 login
+    Partitioning method:
+      Guided - use entire disk
+      All files in one partition
+      Finish partitioning
+    Write the changes to disk:
+      yes
+    Software selection:
+      unselect everything except 'SSH server'
+    Install the GRUB boot to primary drive:
+      yes
+      /dev/sda
+    continue
+
+login as root
+
+Connect with OS terminal:
+  ssh root@localhost -p 42
