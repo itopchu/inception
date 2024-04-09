@@ -1,20 +1,10 @@
-FROM	debian:buster
+FROM debian:bullseye
 
-RUN	    apt update -y && \
-	    apt upgrade -y && \
-	    apt-get install -y nginx \
-        openssl && \
-        mkdir -p /etc/nginx/ssl && \
-        mkdir -p /run/nginx && \
-        chown -R www-data /var/lib/nginx && \
-        rm -rf /etc/nginx/sites-available/default
+RUN apt-get update && apt-get install -y nginx
 
-COPY    ./conf/default.conf /etc/nginx/sites-available/default.conf
-COPY    ./conf/nginx.conf /etc/nginx/nginx.conf
-COPY    ./tools/run.sh /tmp/run.sh
+COPY ../conf/nginx.conf /etc/nginx/nginx.conf
 
-RUN     ln -s /etc/nginx/sites-available/default.conf /etc/nginx/sites-enabled/default.conf
+COPY ../conf/certificate.crt /etc/nginx/ssl/certificate.crt
+COPY ../conf/private.key /etc/nginx/ssl/private.key
 
-EXPOSE	443
-
-ENTRYPOINT [ "sh", "/tmp/run.sh" ]
+EXPOSE 443

@@ -6,11 +6,13 @@ services:
     image: mariadb
     container_name: mariadb
     env_file: .env
-    retart: on-failure
+    restart: on-failure
     volumes:
       - mariadb:/var/lib/mysql
     networks:
       - inception
+    ports:
+      - "3306:3306"
   wordpress:
     build: requirements:wordpress
     image: wordpress

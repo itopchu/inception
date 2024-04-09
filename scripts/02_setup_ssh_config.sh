@@ -17,9 +17,7 @@ fi
 
 sed -i \
     -e 's/#Port 22/Port 42/' \
-    -e 's/#PermitRootLogin yes/PermitRootLogin yes/' \
-    -e 's/#PubkeyAuthentication no/PubkeyAuthentication no/' \
-    -e 's/#PasswordAuthentication yes/PasswordAuthentication yes/' \
+    -e 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' \
     "$sshd"
 
 # Check if the modifications were successful

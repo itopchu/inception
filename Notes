@@ -1,4 +1,4 @@
-Virtual machine is 'debian-11.8.0-amd64-netinst'
+Virtual machine is 'debian-11.9.0-amd64-netinst'
 
   System:
     40GB disk size
@@ -6,7 +6,7 @@ Virtual machine is 'debian-11.8.0-amd64-netinst'
     4CPU
     Skip unattended installation
     -Floppy +Hard Disk +Network
-
+    "Enable EFI (special OSes only)" (windows?+!)
   Display:
     memory 64MB, VMSVA, 3D Acceleration
 

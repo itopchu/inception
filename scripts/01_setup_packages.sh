@@ -9,8 +9,9 @@ NC='\033[0m' # No Color
 echo -e "${CYAN}01_setup_packages.sh started${NC}"
 
 # Install necessary packages
-sudo apt update
-sudo apt install -y sudo ufw docker docker-compose make openbox xinit kitty firefox-esr
+apt update
+apt upgrade
+apt install -y sudo ufw docker docker-compose make openbox xinit kitty firefox-esr
 
 # Check if the installation was successful
 if [ $? -eq 0 ]; then

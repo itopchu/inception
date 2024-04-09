@@ -1,18 +1,13 @@
-FROM    debian:bullseye
+FROM debian:bullseye
 
-RUN     apt-get update -yq \
-        && apt-get upgrade -y
-		&& apt-get install mariadb-server mariadb-client -y
-        && mkdir -p /var/run/mysqld
-		&& chown -R mysql:mysql /var/run/mysqld /etc/mysql
-		&& chown -R mysql:mysql /tmp/ /etc/mysql/
+RUN apt-get update && apt-get install -y mariadb-server
 
-COPY    ./tools/run.sh /tmp/
-COPY    ./conf/init.sql /tmp/
-COPY    ./conf/my.cnf /etc/mysql
+ENV MYSQL_ROOT_PASSWORD=root_password
+ENV MYSQL_DATABASE=wordpress_db
+ENV MYSQL_USER=wordpress_user
+ENV MYSQL_PASSWORD=wordpress_password
 
-EXPOSE  3306
+# COPY ../conf/init.sql /etc/$HOME/init.cnf
+COPY ../conf/my.cnf /etc/$HOME/my.cnf
 
-USER	mysql
-
-ENTRYPOINT ["sh", "/tmp/run.sh"]
+EXPOSE 3306

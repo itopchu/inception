@@ -9,10 +9,10 @@ NC='\033[0m' # No Color
 echo -e "${CYAN}04_allow_ports.sh started${NC}"
 
 # Allow ports for connections
+ufw allow 443/tcp
+ufw allow 80/tcp
+ufw allow 42/tcp
 ufw enable
-ufw allow 443
-ufw allow 80
-ufw allow 42
 
 # Check if the commands were successful
 if [ $? -eq 0 ]; then
