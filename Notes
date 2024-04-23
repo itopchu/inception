@@ -4,17 +4,16 @@ Virtual machine is 'debian-11.9.0-amd64-netinst'
     40GB disk size
     8GB RAM
     4CPU
-    Skip unattended installation
     -Floppy +Hard Disk +Network
-    "Enable EFI (special OSes only)" (windows?+!)
+    "Enable EFI (special OSes only)"
   Display:
     memory 64MB, VMSVA, 3D Acceleration
 
   Network:
     Forwarding:
-      HTTP	80	80
-      HTTPS	443	443
-      SSH		42	42
+      HTTP	80    80
+      HTTPS	443   443
+      SSH		2222  2222
 
   Non-Graphical installation:
     Language and region selection:
@@ -41,4 +40,4 @@ Virtual machine is 'debian-11.9.0-amd64-netinst'
 login as root
 
 Connect with OS terminal:
-  ssh root@localhost -p 42
+  ssh root@localhost -p 2222

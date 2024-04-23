@@ -31,8 +31,8 @@ fi
 chmod +x \
 	01_setup_packages.sh \
 	02_setup_ssh_config.sh \
-	03_restart_ssh_service.sh \
-    04_allow_ports.sh \
+    03_allow_ports.sh \
+	04_restart_ssh_service.sh \
 	05_add_user_to_groups.sh \
 	06_add_domain_for_user.sh \
 	07_create_inception_files.sh \

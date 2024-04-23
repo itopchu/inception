@@ -20,25 +20,41 @@ while true; do
     if [ -z "$status" ]; then
         echo "Please enter a valid response (y/n)."
     elif [ "$status" == "y" ] || [ "$status" == "Y" ]; then
-    echo "Project files are not set. Certificates skipped"
+        echo "Project files are set. Proceeding with certificates arrangement."
         break
     elif [ "$status" == "n" ] || [ "$status" == "N" ]; then
         echo "Project files are not set. Exiting..."
         exit 1
     else
-		echo "Unexpected character received. Handled as 'n'. Certificates skipped"
+		echo "Unexpected character received. Assuming 'n'. Exiting..."
         exit 1
     fi
 done
 
-mkcert $target_username.42.fr
-mv $target_username.42.fr-key.pem home/$target_username/Inception/srcs/requirements/tools/$target_username.42.fr.key
-mv $target_username.42.fr.pem home/$target_username/Inception/srcs/requirements/tools/$target_username.42.fr.crt
+mkcert "$target_username.42.fr"
 
-# Check if the commands were successful
+# Check if mkcert command was successful
+if [ $? -ne 0 ]; then
+    echo -e "${RED}Failed to generate certificates.${NC}"
+    exit 1
+fi
+
+# Check if target directory exists and move certificate files
+target_dir="/home/$target_username/Inception/srcs/requirements/tools"
+if [ ! -d "$target_dir" ]; then
+    echo -e "${RED}Target directory $target_dir does not exist.${NC}"
+    exit 1
+fi
+
+mv "$target_username.42.fr-key.pem" "$target_dir/$target_username.42.fr.key"
+mv "$target_username.42.fr.pem" "$target_dir/$target_username.42.fr.crt"
+
+# Check if the move commands were successful
 if [ $? -eq 0 ]; then
-    echo -e "${GREEN}07_arrange_certificates.sh ended${NC}"
+    echo -e "${GREEN}Certificates arranged successfully.${NC}"
+    echo -e "${GREEN}07_arrange_certificates.sh ended.${NC}"
 else
+    echo -e "${RED}Failed to arrange certificates.${NC}"
     echo -e "${RED}07_arrange_certificates.sh failed. Script terminating.${NC}"
     exit 1
 fi

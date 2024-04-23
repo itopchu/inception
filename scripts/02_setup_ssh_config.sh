@@ -16,8 +16,10 @@ if [ ! -e "$sshd" ]; then
 fi
 
 sed -i \
-    -e 's/#Port 22/Port 42/' \
+    -e 's/#Port 22/Port 2222/' \
     -e 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' \
+	-e 's/#PubkeyAuthentication yes/PubkeyAuthentication no' \
+	-e 's/#PasswordAuthentication yes/PasswordAuthentication yes'
     "$sshd"
 
 # Check if the modifications were successful

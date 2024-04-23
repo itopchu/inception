@@ -6,43 +6,78 @@ GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
+# Check if target_username variable is set
+if [ -z "$target_username" ]; then
+    echo -e "${RED}Error: target_username variable is not set.${NC}"
+    exit 1
+fi
+
 # Writing to .env file
 echo -e "${CYAN}Setting up .env file${NC}"
-echo "DOMAIN_NAME=$target_username.42.fr" > /home/$target_username/Inception/srcs/.env
-echo "CERT_=./requirements/tools/$target_username.42.fr.crt" >> /home/$target_username/Inception/srcs/.env
-echo "KEY_=./requirements/tools/$target_username.42.fr.key" >> /home/$target_username/Inception/srcs/.env
-echo "DB_NAME=wordpress" >> /home/$target_username/Inception/srcs/.env
-echo "DB_ROOT=rootpass" >> /home/$target_username/Inception/srcs/.env
-echo "DB_USER=wpuser" >> /home/$target_username/Inception/srcs/.env
-echo "DB_PASS=wppass" >> /home/$target_username/Inception/srcs/.env
+env_file="/home/$target_username/Inception/srcs/.env"
+
+# Check if .env file exists and create if not
+if [ ! -e "$env_file" ]; then
+    touch "$env_file" || { echo -e "${RED}Error: Failed to create .env file.${NC}"; exit 1; }
+fi
+
+# Add or update variables in .env file
+add_to_env() {
+    local line="$1"
+    if ! grep -qF "$line" "$env_file"; then
+        echo "$line" >> "$env_file"
+    fi
+}
+
+add_to_env "DOMAIN_NAME=$target_username.42.fr"
+add_to_env "CERT_=./requirements/tools/$target_username.42.fr.crt"
+add_to_env "KEY_=./requirements/tools/$target_username.42.fr.key"
+
+# Ask user for DB variables
+read -p "Enter the DB_NAME: " DB_NAME
+read -p "Enter the DB_ROOT: " DB_ROOT
+read -p "Enter the DB_USER: " DB_USER
+read -p "Enter the DB_PASS: " DB_PASS
+
+# Add DB variables to .env file
+add_to_env "DB_NAME=$DB_NAME"
+add_to_env "DB_ROOT=$DB_ROOT"
+add_to_env "DB_USER=$DB_USER"
+add_to_env "DB_PASS=$DB_PASS"
+
 echo -e "${GREEN}Setup of .env file completed${NC}"
 
 # Creating .dockerignore files
 echo -e "${CYAN}Creating .dockerignore files${NC}"
-echo -e ".git\n.env" > /home/$target_username/Inception/srcs/requirements/mariadb/.dockerignore
-echo -e ".git\n.env" > /home/$target_username/Inception/srcs/requirements/nginx/.dockerignore
-echo -e ".git\n.env" > /home/$target_username/Inception/srcs/requirements/wordpress/.dockerignore
+dockerignore_dir="/home/$target_username/Inception/srcs/requirements"
+echo -e ".git\n.env" > "$dockerignore_dir/mariadb/.dockerignore"
+echo -e ".git\n.env" > "$dockerignore_dir/nginx/.dockerignore"
+echo -e ".git\n.env" > "$dockerignore_dir/wordpress/.dockerignore"
 echo -e "${GREEN}Creation of .dockerignore files completed${NC}"
 
 # Editing Makefile
 echo -e "${CYAN}Editing Makefile${NC}"
-cat << EOL >> /home/$target_username/Inception/Makefile
+makefile="/home/$target_username/Inception/Makefile"
+
+# Check if Makefile exists and create if not
+if [ ! -e "$makefile" ]; then
+    touch "$makefile" || { echo -e "${RED}Error: Failed to create Makefile.${NC}"; exit 1; }
+fi
+
+# Add Makefile commands
+cat << EOL >> "$makefile"
 name = inception
 
 all:
-	@printf "Launching configuration \${name}\n"
 	@docker-compose -f ./srcs/docker-compose.yml up -d
 
 build:
-	@printf "Building configuration \${name}\n"
 	@docker-compose -f ./srcs/docker-compose.yml up -d --build
 
 down:
-	@printf "Stopping configuration \${name}\n"
 	@docker-compose -f ./srcs/docker-compose.yml down
 
 re:
-	@printf "Rebuilding configuration \${name}\n"
 	@docker-compose -f ./srcs/docker-compose.yml up -d --build
 
 clean: down
@@ -50,7 +85,6 @@ clean: down
 	@docker system prune -a
 
 fclean:
-	@printf "Total clean of all configurations docker\n"
 	@docker stop $$(docker ps -qa)
 	@docker system prune --all --force --volumes
 	@docker network prune --force

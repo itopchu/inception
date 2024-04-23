@@ -15,12 +15,20 @@ if [ ! -e "$hosts" ]; then
     exit 1
 fi
 
-sed -i "/^127.0.0.1/s/localhost$/$target_username.42.fr localhost/" "$hosts"
-
-# Check if the commands were successful
-if [ $? -eq 0 ]; then
-    echo -e "${GREEN}08_add_domain_for_user.sh ended${NC}"
+# Check if the domain is already added for the user
+if grep -q "$target_username\.42\.fr" "$hosts"; then
+    echo -e "${GREEN}Domain already added for user $target_username.${NC}"
 else
-    echo -e "${RED}08_add_domain_for_user.sh failed. Script terminating.${NC}"
-    exit 1
+    # Add the domain for the user
+    sed -i "/^127.0.0.1/s/localhost$/$target_username.42.fr localhost/" "$hosts"
+    
+    # Check if the command was successful
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}Domain added for user $target_username.${NC}"
+    else
+        echo -e "${RED}Failed to add domain for user $target_username. Script terminating.${NC}"
+        exit 1
+    fi
 fi
+
+echo -e "${GREEN}08_add_domain_for_user.sh ended${NC}"
