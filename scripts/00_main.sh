@@ -11,9 +11,8 @@ if [ -e /etc/os-release ]; then
         debian_version=$(lsb_release -rs)
 
         # Check if the version is greater than or equal to 11
-        if [ "$(echo "$debian_version >= 11" | bc)" -eq 1 ]; then
+        if [[ "$debian_version" == "11" || "$debian_version" > "11" ]]; then
             echo "Debian version is 11 or higher. Continuing with the script."
-            # Continue with the rest of your script here
         else
             echo "Debian version is less than 11. Exiting."
             exit 1
@@ -53,15 +52,15 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-source 03_restart_ssh_service.sh
+source 03_allow_ports.sh
 if [ $? -ne 0 ]; then
-    echo "Error in 03_restart_ssh_service.sh. Exiting."
+    echo "Error in 03_allow_ports.sh. Exiting."
     exit 1
 fi
 
-source 04_allow_ports.sh
+source 04_restart_ssh_service.sh
 if [ $? -ne 0 ]; then
-    echo "Error in 04_allow_ports.sh. Exiting."
+    echo "Error in 04_restart_ssh_service.sh. Exiting."
     exit 1
 fi
 
