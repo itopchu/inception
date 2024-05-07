@@ -120,7 +120,7 @@ volumes:
     driver_opts:
       type: none
       device: /home/\${USER_NAME}/data/mariadb
-      o: bind' > /home/\$target_username/Inception/srcs/docker-compose.yml"
+      o: bind'" > /home/\$target_username/Inception/srcs/docker-compose.yml
 
 echo 'FROM debian:bullseye
 
