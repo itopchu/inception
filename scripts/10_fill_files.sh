@@ -54,7 +54,7 @@ DB_USER=wpuser
 DB_PASSWORD=wppass
 DB_CHARSET=utf8" >> /home/$target_username/Inception/srcs/.env
 
-echo "version: "\'"3.3"\'"
+echo "version: '3.3'
 
 services:
 
@@ -65,8 +65,8 @@ services:
     environment:
       DOMAIN_NAME: \${DOMAIN_NAME}
     ports:
-      - "443:443"
-      - "80:80"
+      - \"443:443\"
+      - \"80:80\"
     volumes:
       - /home/\${USER_NAME}/data/wordpress:/var/www/html
     networks:
@@ -85,7 +85,7 @@ services:
     volumes:
       - mariadb_data:/var/lib/mysql
     ports:
-      - "3306:3306"
+      - \"3306:3306\"
     networks:
       - app-network
 
@@ -100,7 +100,7 @@ services:
     volumes:
       - wordpress_data:/var/www/
     ports:
-      - "9000:9000"
+      - \"9000:9000\"
     networks:
       - app-network
 
