@@ -13,17 +13,17 @@ echo "USER = $target_username" >> /home/$target_username/Inception/Makefile
 
 echo 'all:
 	@bash -c "mkdir -p /home/$(USER)/data/{wordpress/,mariadb/}"
-	@docker-compose -f ./srcs/docker-compose.yml --env-file srcs/.env up -d
+	@docker-compose -f ./srcs/docker-compose.yml up -d
 
 build:
 	@bash -c "mkdir -p /home/$(USER)/data/{wordpress/,mariadb/}"
-	@docker-compose -f ./srcs/docker-compose.yml --env-file srcs/.env up -d --build
+	@docker-compose -f ./srcs/docker-compose.yml up -d --build
 
 down:
-	@docker-compose -f ./srcs/docker-compose.yml --env-file srcs/.env down
+	@docker-compose -f ./srcs/docker-compose.yml down
 
 re: down
-	@docker-compose -f ./srcs/docker-compose.yml --env-file srcs/.env up -d --build
+	@docker-compose -f ./srcs/docker-compose.yml up -d --build
 
 clean: down
 	@docker system prune -a
@@ -56,6 +56,7 @@ echo "version: '3.3'
 services:
 
   nginx:
+    env_file: .env
     build: requirements/nginx/
     container_name: nginx
     restart: always
@@ -70,6 +71,7 @@ services:
       - app-network
 
   mariadb:
+    env_file: .env
     build: requirements/mariadb/
     container_name: mariadb
     restart: always
@@ -87,6 +89,7 @@ services:
       - app-network
 
   wordpress:
+    env_file: .env
     build: requirements/wordpress/
     container_name: wordpress
     depends_on:
@@ -127,6 +130,11 @@ RUN apt-get update && apt-get install -y mariadb-server
 
 COPY ./conf/ /etc/mysql/mariadb.conf.d/
 COPY ./tools /var/www/
+
+RUN echo "DB_ROOT: ${DB_ROOT}" && \
+    echo "DB_NAME: ${DB_NAME}" && \
+    echo "DB_USER: ${DB_USER}" && \
+    echo "DB_PASSWORD: ${DB_PASSWORD}"
 
 RUN sed -i "s|\\${DB_ROOT}|${DB_ROOT}|g" /var/www/initial_db.sql && \
     sed -i "s|\\${DB_NAME}|${DB_NAME}|g" /var/www/initial_db.sql && \
