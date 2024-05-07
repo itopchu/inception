@@ -12,11 +12,11 @@ echo 'NAME = inception' > /home/$target_username/Inception/Makefile
 echo "USER = $target_username" >> /home/$target_username/Inception/Makefile
 
 echo 'all:
-	@mkdir -p /home/$(USER)/data/{wordpress, mariadb}
+	@bash -c "mkdir -p /home/$(USER)/data/{wordpress, mariadb}"
 	@docker-compose -f ./srcs/docker-compose.yml --env-file srcs/.env up -d
 
 build:
-	@mkdir -p /home/$(USER)/data/{wordpress, mariadb}
+	@bash -c "mkdir -p /home/$(USER)/data/{wordpress, mariadb}"
 	@docker-compose -f ./srcs/docker-compose.yml --env-file srcs/.env up -d --build
 
 down:
@@ -27,18 +27,17 @@ re: down
 
 clean: down
 	@docker system prune -a
-	@sudo rm -rf /home/$(USER)/data
+	@bash -c (rm -rf /home/$(USER)/data)
 
 fclean:
 	@printf "Total clean of all configurations docker\n"
+	@bash -c (rm -rf /home/$(USER)/data)
 	@docker stop $$(docker ps -qa)
 	@docker system prune --all --force --volumes
 	@docker network prune --force
 	@docker volume prune --force
-	@sudo rm -rf /home/$(USER)/data/
 
-.PHONY	: all build down re clean fclean
-' >> /home/$target_username/Inception/Makefile
+.PHONY	: all build down re clean fclean' >> /home/$target_username/Inception/Makefile
 
 echo -e "${GREEN}11_fill_files.sh ended${NC}"
 echo "USER_NAME=$target_username" > /home/$target_username/Inception/srcs/.env
