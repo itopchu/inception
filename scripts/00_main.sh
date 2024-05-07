@@ -37,7 +37,8 @@ chmod +x \
 	07_create_inception_files.sh \
     08_arrange_certificates.sh \
 	09_makefile_dockerignore.sh \
-	10_create_bonus_files.sh
+	10_create_bonus_files.sh \
+    11_fill_files.sh
 
 # Run setup functions in order
 source 01_setup_packages.sh
@@ -100,4 +101,9 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+source 11_fill_files.sh
+if [ $? -ne 0 ]; then
+    echo "Error in 11_fill_files.sh. Exiting."
+    exit 1
+fi
 echo "All scripts executed successfully."
