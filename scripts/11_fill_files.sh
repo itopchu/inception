@@ -54,7 +54,7 @@ DB_USER=wpuser
 DB_PASSWORD=wppass
 DB_CHARSET=utf8" >> /home/$target_username/Inception/srcs/.env
 
-echo 'version: '3.8'
+echo "version: "\'"3.3"\'"
 
 services:
 
@@ -63,12 +63,12 @@ services:
     container_name: nginx
     restart: always
     environment:
-      DOMAIN_NAME: ${DOMAIN_NAME}
+      DOMAIN_NAME: \${DOMAIN_NAME}
     ports:
       - "443:443"
       - "80:80"
     volumes:
-      - /home/${USER_NAME}/data/wordpress:/var/www/html
+      - /home/\${USER_NAME}/data/wordpress:/var/www/html
     networks:
       - app-network
 
@@ -77,11 +77,11 @@ services:
     container_name: mariadb
     restart: always
     environment:
-      DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_ROOT: ${DB_ROOT}
-      WP_PHP_VERSION: ${WP_PHP_VERSION}
+      DB_NAME: \${DB_NAME}
+      DB_USER: \${DB_USER}
+      DB_PASSWORD: \${DB_PASSWORD}
+      DB_ROOT: \${DB_ROOT}
+      WP_PHP_VERSION: \${WP_PHP_VERSION}
     volumes:
       - mariadb_data:/var/lib/mysql
     ports:
@@ -110,13 +110,17 @@ networks:
 
 volumes:
   wordpress_data:
-    type: none
-    device: /home/${USER_NAME}/data/wordpress
-    o: bind
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/\${USER_NAME}/data/wordpress
+      o: bind
   mariadb_data:
-    type: none
-    device: /home/${USER_NAME}/data/mariadb
-    o: bind' > /home/$target_username/Inception/srcs/docker-compose.yml
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/\${USER_NAME}/data/mariadb
+      o: bind' > /home/\$target_username/Inception/srcs/docker-compose.yml"
 
 echo 'FROM debian:bullseye
 
@@ -156,7 +160,7 @@ RUN apt-get update && apt-get install -y \
 nginx \
 openssl
 
-COPY ../tools/* /etc/nginx/ssl/
+COPY ../tools/ /etc/nginx/ssl/
 COPY conf/nginx.conf /etc/nginx/conf.d/default.conf
 
 CMD ["nginx", "-g", "daemon off;"]' > /home/$target_username/Inception/srcs/requirements/nginx/Dockerfile

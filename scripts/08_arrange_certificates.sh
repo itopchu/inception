@@ -48,6 +48,8 @@ fi
 
 mv "$target_username.42.fr-key.pem" "$target_dir/$target_username.42.fr.key"
 mv "$target_username.42.fr.pem" "$target_dir/$target_username.42.fr.crt"
+cp "$target_dir/$target_username.42.fr.key" "/home/$target_username/Inception/srcs/requirements/nginx/tools/"
+cp "$target_dir/$target_username.42.fr.crt" "/home/$target_username/Inception/srcs/requirements/nginx/tools/"
 
 # Check if the move commands were successful
 if [ $? -eq 0 ]; then
