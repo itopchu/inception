@@ -12,11 +12,11 @@ echo 'NAME = inception' > /home/$target_username/Inception/Makefile
 echo "USER = $target_username" >> /home/$target_username/Inception/Makefile
 
 echo 'all:
-	@bash -c "mkdir -p /home/$(USER)/data/{wordpress, mariadb}"
+	@bash -c "mkdir -p /home/$(USER)/data/{wordpress/,mariadb/}"
 	@docker-compose -f ./srcs/docker-compose.yml --env-file srcs/.env up -d
 
 build:
-	@bash -c "mkdir -p /home/$(USER)/data/{wordpress, mariadb}"
+	@bash -c "mkdir -p /home/$(USER)/data/{wordpress/,mariadb/}"
 	@docker-compose -f ./srcs/docker-compose.yml --env-file srcs/.env up -d --build
 
 down:
@@ -117,7 +117,7 @@ volumes:
     driver_opts:
       type: none
       device: /home/\${USER_NAME}/data/mariadb
-      o: bind'" > /home/$target_username/Inception/srcs/docker-compose.yml
+      o: bind" > /home/$target_username/Inception/srcs/docker-compose.yml
 
 echo 'FROM debian:bullseye
 
