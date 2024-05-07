@@ -9,7 +9,7 @@ NC='\033[0m' # No Color
 echo -e "${CYAN}11_fill_files.sh started${NC}"
 
 echo 'NAME = inception' > /home/$target_username/Inception/Makefile
-echo "USER = $target_user" >> /home/$target_username/Inception/Makefile
+echo "USER = $target_username" >> /home/$target_username/Inception/Makefile
 
 echo 'all:
 	@mkdir -p /home/$(USER)/data/{wordpress, mariadb}
@@ -27,8 +27,7 @@ re: down
 
 clean: down
 	@docker system prune -a
-	@sudo rm -rf ~/data/wordpress/*
-	@sudo rm -rf ~/data/mariadb/*
+	@sudo rm -rf /home/$(USER)/data
 
 fclean:
 	@printf "Total clean of all configurations docker\n"
@@ -36,8 +35,7 @@ fclean:
 	@docker system prune --all --force --volumes
 	@docker network prune --force
 	@docker volume prune --force
-	@sudo rm -rf ~/data/wordpress/*
-	@sudo rm -rf ~/data/mariadb/*
+	@sudo rm -rf /home/$(USER)/data/
 
 .PHONY	: all build down re clean fclean
 ' >> /home/$target_username/Inception/Makefile
@@ -120,7 +118,7 @@ volumes:
     driver_opts:
       type: none
       device: /home/\${USER_NAME}/data/mariadb
-      o: bind'" > /home/\$target_username/Inception/srcs/docker-compose.yml
+      o: bind'" > /home/$target_username/Inception/srcs/docker-compose.yml
 
 echo 'FROM debian:bullseye
 
@@ -192,7 +190,7 @@ server {
     location / {
         try_files $uri /index.php?$args;
         add_header Last-Modified $date_gmt;
-        add_header Cache-Control 'no-store, no-cache';
+        add_header Cache-Control '\''no-store, no-cache'\'';
         if_modified_since off;
         expires off;
         etag off;
@@ -206,8 +204,7 @@ server {
     		fastcgi_param PATH_INFO $fastcgi_path_info;
     	}
 
-}
-' > /home/$target_username/Inception/srcs/requirements/nginx/conf/nginx.conf
+}' > /home/$target_username/Inception/srcs/requirements/nginx/conf/nginx.conf
 
 echo 'RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
@@ -247,25 +244,23 @@ CMD ["/usr/sbin/php-fpm${WP_PHP_VERSION}", "-F"]' > /home/$target_username/Incep
 
 echo '#!/bin/sh
 if [ ! -f "/var/www/wp-config.php" ]; then
-    cat << 'EOF' > /var/www/wp-config.php
+    cat << '\''EOF'\'' > /var/www/wp-config.php
 <?php
-define( 'DB_NAME', '\''${DB_NAME}'\'' );
-define( 'DB_USER', '\''${DB_USER}'\'' );
-define( 'DB_PASSWORD', '\''${DB_PASSWORD}'\'' );
-define( 'DB_HOST', '\''${DB_HOST}'\'' );
-define( 'DB_CHARSET', '\''${DB_CHARSET}'\'' );
-define( 'DB_COLLATE', '\''\'' );
+define( '\''DB_NAME'\'', '\''${DB_NAME}'\'' );
+define( '\''DB_USER'\'', '\''${DB_USER}'\'' );
+define( '\''DB_PASSWORD'\'', '\''${DB_PASSWORD}'\'' );
+define( '\''DB_HOST'\'', '\''${DB_HOST}'\'' );
+define( '\''DB_CHARSET'\'', '\''${DB_CHARSET}'\'' );
+define( '\''DB_COLLATE'\'', '\''\'' );
 \$table_prefix = '\''wp_'\'';
-define( 'WP_DEBUG', false );
-if ( ! defined( '\''ABSPATH'\'' ) ) {
+define( '\''WP_DEBUG'\'', false );
+if ( ! defined( '\''ABSPATH'\'') ) {
     define( '\''ABSPATH'\'', __DIR__ . '\''/'\'' );
 }
 require_once ABSPATH . '\''wp-settings.php'\'';
 EOF
-fi
-' > /home/$target_username/Inception/srcs/requirements/wordpress/conf/wp-config-create.sh
+fi' > /home/$target_username/Inception/srcs/requirements/wordpress/conf/wp-config-create.sh
 
-# Check if the commands were successful
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}11_fill_files.sh ended${NC}"
 else
