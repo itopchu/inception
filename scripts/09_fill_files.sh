@@ -13,16 +13,16 @@ echo "USER = $target_username" >> /home/$target_username/Inception/Makefile
 
 echo 'all:
 	@bash -c "mkdir -p /home/$(USER)/data/{wordpress/,mariadb/}"
-	@docker-compose -f ./srcs/docker-compose.yml up -d
+	@docker-compose -f ./srcs/docker-compose.yml --env-file ./srcs/.env up -d
 
 build:
 	@bash -c "mkdir -p /home/$(USER)/data/{wordpress/,mariadb/}"
-	@docker-compose -f ./srcs/docker-compose.yml up -d --build
+	@docker-compose -f ./srcs/docker-compose.yml --env-file ./srcs/.env up -d --build
 
 down:
 	@docker-compose -f ./srcs/docker-compose.yml down
 
-re: down
+re: down fclean build all
 	@docker-compose -f ./srcs/docker-compose.yml up -d --build
 
 clean: down
@@ -39,7 +39,6 @@ fclean:
 
 .PHONY	: all build down re clean fclean' >> /home/$target_username/Inception/Makefile
 
-echo -e "${GREEN}11_fill_files.sh ended${NC}"
 echo "USER_NAME=$target_username" > /home/$target_username/Inception/srcs/.env
 echo "DOMAIN_NAME=$target_username.42.fr" >> /home/$target_username/Inception/srcs/.env
 echo "WP_TITLE=Inception
@@ -51,45 +50,46 @@ DB_USER=wpuser
 DB_PASSWORD=wppass
 DB_CHARSET=utf8" >> /home/$target_username/Inception/srcs/.env
 
-echo "version: '3.3'
+echo 'version: '\''3.3'\''
 
 services:
 
   nginx:
-    env_file: .env
+    env_file:
+      - .env
     build: requirements/nginx/
     container_name: nginx
     restart: always
     environment:
-      DOMAIN_NAME: \${DOMAIN_NAME}
+      DOMAIN_NAME:${DOMAIN_NAME}
     ports:
-      - \"443:443\"
-      - \"80:80\"
+      - "443:443"
+      - "80:80"
     volumes:
-      - /home/\${USER_NAME}/data/wordpress:/var/www/html
+      - /home/${USER_NAME}/data/wordpress:/var/www/html
     networks:
       - app-network
 
   mariadb:
-    env_file: .env
+    env_file:
+      - .env
     build: requirements/mariadb/
     container_name: mariadb
     restart: always
     environment:
-      DB_NAME: \${DB_NAME}
-      DB_USER: \${DB_USER}
-      DB_PASSWORD: \${DB_PASSWORD}
-      DB_ROOT: \${DB_ROOT}
-      WP_PHP_VERSION: \${WP_PHP_VERSION}
+      DB_NAME:${DB_NAME}
+      DB_USER:${DB_USER}
+      DB_PASSWORD:${DB_PASSWORD}
+      DB_ROOT:${DB_ROOT}
+      WP_PHP_VERSION:${WP_PHP_VERSION}
     volumes:
       - mariadb_data:/var/lib/mysql
     ports:
-      - \"3306:3306\"
+      - "3306:3306"
     networks:
       - app-network
 
   wordpress:
-    env_file: .env
     build: requirements/wordpress/
     container_name: wordpress
     depends_on:
@@ -100,7 +100,7 @@ services:
     volumes:
       - wordpress_data:/var/www/
     ports:
-      - \"9000:9000\"
+      - "9000:9000"
     networks:
       - app-network
 
@@ -113,14 +113,14 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /home/\${USER_NAME}/data/wordpress
+      device: /home/${USER_NAME}/data/wordpress
       o: bind
   mariadb_data:
     driver: local
     driver_opts:
       type: none
-      device: /home/\${USER_NAME}/data/mariadb
-      o: bind" > /home/$target_username/Inception/srcs/docker-compose.yml
+      device: /home/${USER_NAME}/data/mariadb
+      o: bind' > /home/$target_username/Inception/srcs/docker-compose.yml
 
 echo 'FROM debian:bullseye
 
