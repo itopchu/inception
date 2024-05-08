@@ -90,13 +90,13 @@ services:
       - app-network
 
   wordpress:
+    env_file:
+      - .env
     build: requirements/wordpress/
     container_name: wordpress
     depends_on:
       - mariadb
     restart: always
-    env_file:
-      - .env
     volumes:
       - wordpress_data:/var/www/
     ports:
@@ -130,23 +130,17 @@ RUN apt-get update && apt-get install -y mariadb-server
 
 COPY ./conf/ /etc/mysql/mariadb.conf.d/
 COPY ./tools /var/www/
-
-RUN echo "DB_ROOT: ${DB_ROOT}" && \
-    echo "DB_NAME: ${DB_NAME}" && \
-    echo "DB_USER: ${DB_USER}" && \
-    echo "DB_PASSWORD: ${DB_PASSWORD}"
-
-RUN sed -i "s|\\${DB_ROOT}|${DB_ROOT}|g" /var/www/initial_db.sql && \
-    sed -i "s|\\${DB_NAME}|${DB_NAME}|g" /var/www/initial_db.sql && \
-    sed -i "s|\\${DB_USER}|${DB_USER}|g" /var/www/initial_db.sql && \
-    sed -i "s|\\${DB_PASSWORD}|${DB_PASSWORD}|g" /var/www/initial_db.sql
-
 COPY ./tools/startup.sh /usr/local/bin/startup.sh
 RUN chmod +x /usr/local/bin/startup.sh
 
 ENTRYPOINT ["/usr/local/bin/startup.sh"]' > /home/$target_username/Inception/srcs/requirements/mariadb/Dockerfile
 
 echo '#!/bin/bash
+
+sed -i "s|\\${DB_ROOT}|$DB_ROOT|g" /var/www/initial_db.sql
+sed -i "s|\\${DB_NAME}|$DB_NAME|g" /var/www/initial_db.sql
+sed -i "s|\\${DB_USER}|$DB_USER|g" /var/www/initial_db.sql
+sed -i "s|\\${DB_PASSWORD}|$DB_PASSWORD|g" /var/www/initial_db.sql
 
 service mariadb start
 
@@ -183,7 +177,7 @@ RUN apt-get update && apt-get install -y \
 nginx \
 openssl
 
-COPY ../tools/ /etc/nginx/ssl/
+COPY tools/ /etc/nginx/ssl/
 COPY conf/nginx.conf /etc/nginx/conf.d/default.conf
 
 CMD ["nginx", "-g", "daemon off;"]' > /home/$target_username/Inception/srcs/requirements/nginx/Dockerfile
@@ -231,29 +225,31 @@ server {
 
 }' > /home/$target_username/Inception/srcs/requirements/nginx/conf/nginx.conf
 
-echo 'RUN apt-get update && apt-get upgrade -y && \
+echo 'FROM debian:bullseye
+
+RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
-    php${WP_PHP_VERSION} \
-    php${WP_PHP_VERSION}-fpm \
-    php${WP_PHP_VERSION}-mysqli \
-    php${WP_PHP_VERSION}-json \
-    php${WP_PHP_VERSION}-curl \
-    php${WP_PHP_VERSION}-dom \
-    php${WP_PHP_VERSION}-exif \
-    php${WP_PHP_VERSION}-fileinfo \
-    php${WP_PHP_VERSION}-mbstring \
-    php${WP_PHP_VERSION}-openssl \
-    php${WP_PHP_VERSION}-xml \
-    php${WP_PHP_VERSION}-zip \
-    php${WP_PHP_VERSION}-redis \
+    php8.3 \
+    php8.3-fpm \
+    php8.3-mysqli \
+    php8.3-json \
+    php8.3-curl \
+    php8.3-dom \
+    php8.3-exif \
+    php8.3-fileinfo \
+    php8.3-mbstring \
+    php8.3-openssl \
+    php8.3-xml \
+    php8.3-zip \
+    php8.3-redis \
     wget \
     unzip && \
     sed -i "s|listen = 127.0.0.1:9000|listen = 9000|g" \
-      /etc/php/${WP_PHP_VERSION}/fpm/pool.d/www.conf && \
+      /etc/php/8.3/fpm/pool.d/www.conf && \
     sed -i "s|;listen.owner = www-data|listen.owner = www-data|g" \
-      /etc/php/${WP_PHP_VERSION}/fpm/pool.d/www.conf && \
+      /etc/php/8.3/fpm/pool.d/www.conf && \
     sed -i "s|;listen.group = www-data|listen.group = www-data|g" \
-      /etc/php/${WP_PHP_VERSION}/fpm/pool.d/www.conf && \
+      /etc/php/8.3/fpm/pool.d/www.conf && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /var/www
@@ -265,7 +261,7 @@ COPY ./conf/wp-config-create.sh .
 RUN sh wp-config-create.sh && rm wp-config-create.sh && \
     chmod -R 0777 wp-content/
 
-CMD ["/usr/sbin/php-fpm${WP_PHP_VERSION}", "-F"]' > /home/$target_username/Inception/srcs/requirements/wordpress/Dockerfile
+CMD ["/usr/sbin/php-fpm8.3", "-F"]' > /home/$target_username/Inception/srcs/requirements/wordpress/Dockerfile
 
 echo '#!/bin/sh
 if [ ! -f "/var/www/wp-config.php" ]; then
