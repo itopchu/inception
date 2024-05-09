@@ -1,0 +1,10 @@
+FROM debian:bullseye
+
+# Install PHP and WordPress dependencies
+RUN apt-get update && apt-get install -y php-fpm php-mysql wordpress
+
+# Expose port
+EXPOSE 9000
+
+# Start php-fpm
+CMD ["php-fpm7.4", "--nodaemonize"]

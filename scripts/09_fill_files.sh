@@ -27,11 +27,11 @@ re: down fclean build all
 
 clean: down
 	@docker system prune -a
-	@bash -c (rm -rf /home/$(USER)/data)
+	@bash -c "rm -rf /home/$(USER)/data"
 
 fclean:
 	@printf "Total clean of all configurations docker\n"
-	@bash -c (rm -rf /home/$(USER)/data)
+	@bash -c "rm -rf /home/$(USER)/data"
 	@docker stop $$(docker ps -qa)
 	@docker system prune --all --force --volumes
 	@docker network prune --force
@@ -60,8 +60,6 @@ services:
     build: requirements/nginx/
     container_name: nginx
     restart: always
-    environment:
-      DOMAIN_NAME:${DOMAIN_NAME}
     ports:
       - "443:443"
       - "80:80"
@@ -76,12 +74,6 @@ services:
     build: requirements/mariadb/
     container_name: mariadb
     restart: always
-    environment:
-      DB_NAME:${DB_NAME}
-      DB_USER:${DB_USER}
-      DB_PASSWORD:${DB_PASSWORD}
-      DB_ROOT:${DB_ROOT}
-      WP_PHP_VERSION:${WP_PHP_VERSION}
     volumes:
       - mariadb_data:/var/lib/mysql
     ports:
@@ -227,21 +219,21 @@ server {
 
 echo 'FROM debian:bullseye
 
-RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y --no-install-recommends \
-    php8.3 \
-    php8.3-fpm \
-    php8.3-mysqli \
-    php8.3-json \
-    php8.3-curl \
-    php8.3-dom \
-    php8.3-exif \
-    php8.3-fileinfo \
-    php8.3-mbstring \
-    php8.3-openssl \
-    php8.3-xml \
-    php8.3-zip \
-    php8.3-redis \
+RUN apt-get update && \
+    apt-get install -y \
+    php \
+    php-fpm \
+    php-mysqli \
+    php-json \
+    php-curl \
+    php-dom \
+    php-exif \
+    php-fileinfo \
+    php-mbstring \
+    php-openssl \
+    php-xml \                                                                                       
+    php-zip \
+    php-redis \
     wget \
     unzip && \
     sed -i "s|listen = 127.0.0.1:9000|listen = 9000|g" \

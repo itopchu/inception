@@ -1,0 +1,10 @@
+FROM debian:bullseye
+
+# Install NGINX
+RUN apt-get update && apt-get install -y nginx
+
+# Expose ports
+EXPOSE 80 443
+
+# Start NGINX
+CMD ["nginx", "-g", "daemon off;"]
