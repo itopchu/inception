@@ -72,4 +72,4 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-cp -r ./Inception /home/$target_username/
+cp -r ../Inception /home/$target_username/

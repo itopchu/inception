@@ -8,12 +8,12 @@ services:
       dockerfile: requirements/nginx/Dockerfile
     container_name: nginx
     ports:
-      - "443-443"
+      - "443:443"
     restart: unless-stopped
     networks:
       - webserv
     volumes:
-     - wordpress:/var/www/html
+     - wordpress-vol:/var/www/html
 
   mariadb:
     env_file:
@@ -27,7 +27,7 @@ services:
     networks:
       - website
     volumes:
-      - mariadb:/var/lib/mysql
+      - mariadb-vol:/var/lib/mysql
 
   wordpress:
     env_file:
@@ -42,7 +42,7 @@ services:
       - website
       - webserv
     volumes:
-      - wordpress:/var/www/html
+      - wordpress-vol:/var/www/html
 
 networks:
   webserv:
@@ -52,17 +52,17 @@ networks:
 
 
 volumes:
-  wordpress:
+  wordpress-vol:
     name: wordpress
     driver: local
     driver_opts:
-      device: /Users/sahafid/Desktop/Inception/srcs/wordpress
+      device: /home/${USER_NAME}/data/wordpress
       o: bind
       type: none
-  mariadb:
+  mariadb-vol:
     name: mariadb
     driver: local
     driver_opts:
-      device: /Users/sahafid/Desktop/Inception/srcs/mariadb
+      device: /home/${USER_NAME}/data/mariadb
       o: bind
       type: none
