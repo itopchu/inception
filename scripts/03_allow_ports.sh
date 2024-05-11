@@ -14,6 +14,10 @@ ufw allow 80/tcp
 ufw allow 2222/tcp
 ufw enable
 
+# Restart ssh service
+service ssh restart
+service sshd restart
+
 # Check if the commands were successful
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}03_allow_ports.sh ended${NC}"
