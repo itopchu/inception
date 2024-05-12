@@ -10,12 +10,16 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+ARG DOMAIN_NAME
+
 # Certificate cloning from host machine
-COPY tools/${DOMAIN_NAME}.crt /etc/nginx/${DOMAIN_NAME}.crt
-COPY tools/${DOMAIN_NAME}.key /etc/nginx/${DOMAIN_NAME}.key
+RUN mkdir -p /etc/nginx/
+
+COPY ./tools/${DOMAIN_NAME}.crt /etc/nginx/${DOMAIN_NAME}.crt
+COPY ./tools/${DOMAIN_NAME}.key /etc/nginx/${DOMAIN_NAME}.key
 
 # Config cloning from host machine
-COPY conf/nginx.conf /etc/nginx/nginx.conf.template
+COPY ./conf/nginx.conf /etc/nginx/nginx.conf.template
 
 # Variable expansion in config file
 RUN envsubst '$DOMAIN_NAME' < /etc/nginx/nginx.conf.template > /etc/nginx/.conf

@@ -24,6 +24,26 @@ RUN if [ ! -d /var/www/html/ ]; then \
         wp core download --allow-root \
     fi
 
+ARG DOMAIN_NAME
+ARG MYSQL_DATABASE
+ARG MYSQL_USER
+ARG MYSQL_PASSWORD
+ARG AUTH_KEY
+ARG SECURE_AUTH_KEY
+ARG LOGGED_IN_KEY
+ARG NONCE_KEY
+ARG AUTH_SALT
+ARG SECURE_AUTH_SALT
+ARG LOGGED_IN_SALT
+ARG NONCE_SALT
+ARG WP_TITLE
+ARG WP_ADMIN_USR
+ARG WP_ADMIN_PWD
+ARG WP_ADMIN_EMAIL
+ARG WP_USR
+ARG WP_EMAIL
+ARG WP_PWD
+
 # Config cloning from host machine
 COPY ./conf/wp-config.php /var/www/html/wp-config.php.template
 # Variable expansion in config file
