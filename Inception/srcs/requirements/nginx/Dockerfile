@@ -19,10 +19,11 @@ COPY ./tools/${DOMAIN_NAME}.crt /etc/ssl/${DOMAIN_NAME}.crt
 COPY ./tools/${DOMAIN_NAME}.key /etc/ssl/${DOMAIN_NAME}.key
 
 # Config cloning from host machine
-COPY ./conf/nginx.conf /etc/nginx/nginx.conf.template
+COPY ./conf/nginx.conf /etc/nginx/sites-available/nginx.conf.template
 
 # Variable expansion in config file
-RUN envsubst '$DOMAIN_NAME' < /etc/nginx/nginx.conf.template > /etc/nginx/.conf
+RUN envsubst '$DOMAIN_NAME' < /etc/nginx/sites-available/nginx.conf.template > /etc/nginx/sites-available/nginx.conf
+RUN rm -f /etc/nginx/sites-available/nginx.conf.template
 
 # Start NGINX Server
 CMD ["nginx", "-g", "daemon off;"]
