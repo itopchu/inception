@@ -47,12 +47,11 @@ ARG WP_PWD
 # Config cloning from host machine
 COPY ./conf/wp-config.php /var/www/html/wp-config.php.template
 # Variable expansion in config file
-RUN envsubst '$MYSQL_DATABASE $MYSQL_USER $MYSQL_PASSWORD $MYSQL_HOST $AUTH_KEY $SECURE_AUTH_KEY $LOGGED_IN_KEY $NONCE_KEY $AUTH_SALT $SECURE_AUTH_SALT $LOGGED_IN_SALT $NONCE_SALT' \
-    < /var/www/html/wp-config.php.template > /var/www/html/wp-config.php
-    && rm -f /var/www/html/wp-config.php.template
+RUN envsubst '$MYSQL_DATABASE $MYSQL_USER $MYSQL_PASSWORD $MYSQL_HOST $AUTH_KEY $SECURE_AUTH_KEY $LOGGED_IN_KEY $NONCE_KEY $AUTH_SALT $SECURE_AUTH_SALT $LOGGED_IN_SALT $NONCE_SALT' < /var/www/html/wp-config.php.template > /var/www/html/wp-config.php \
+    && rm -f /var/www/html/wp-config.php.template \
     && wp core install --url=$DOMAIN_NAME/ --title=$WP_TITLE --admin_user=$WP_ADMIN_USR --admin_password=$WP_ADMIN_PWD --admin_email=$WP_ADMIN_EMAIL --skip-email --allow-root \
-    && wp user create $WP_USR $WP_EMAIL --role=author --user_pass=$WP_PWD --allow-root
-    && mkdir /run/php \
+    && wp user create $WP_USR $WP_EMAIL --role=author --user_pass=$WP_PWD --allow-root \
+    && mkdir /run/php
 
 # -fpm.sock listen to 9000
 RUN php_version=$(php -v | grep -P 'PHP \K[0-9]+\.[0-9]+' | head -n 1) \
