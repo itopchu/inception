@@ -15,8 +15,8 @@ ARG DOMAIN_NAME
 # Certificate cloning from host machine
 RUN mkdir -p /etc/nginx/
 
-COPY ./tools/${DOMAIN_NAME}.crt /etc/ssl/${DOMAIN_NAME}.crt
-COPY ./tools/${DOMAIN_NAME}.key /etc/ssl/${DOMAIN_NAME}.key
+COPY ./tools/${DOMAIN_NAME}.crt /etc/ssl/certs/nginx.crt
+COPY ./tools/${DOMAIN_NAME}.key /etc/ssl/private/nginx.key
 
 # Config cloning from host machine
 COPY ./conf/nginx.conf /etc/nginx/sites-available/nginx.conf.template
