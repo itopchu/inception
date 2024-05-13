@@ -7,8 +7,7 @@ EXPOSE 3306
 # gettext-base is needed for env expasion
 # mariadb-client is not needed if you are not planning to pass commands manually
 RUN apt-get update \
-    && apt-get install -y mariadb-server gettext-base \
-    && mariadb-server mariadb-client \
+    && apt-get install -y mariadb-server mariadb-client gettext-base \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -16,15 +15,14 @@ ARG MYSQL_ROOT_PASSWORD
 ARG MYSQL_DATABASE
 ARG MYSQL_USER
 ARG MYSQL_PASSWORD
-    
+
+USER $MYSQL_USER
+
 # Variable expansion in config file
-COPY ./tools/initial.sql /var/www/initial.sql.template
-RUN envsubst '$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE $MYSQL_USER $MYSQL_PASSWORD' < /var/www/initial.sql.template > /var/www/initial.sql
+COPY ./tools/configure_database.sh /tmp/configure_database.sh.template
+RUN envsubst '$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE $MYSQL_USER $MYSQL_PASSWORD' < /tmp/configure_database.sh.template > /tmp/configure_database.sh
 
-RUN service mysql start \
-    && mysql < /var/www/initial.sql \
-    && rm -f /var/www/initial.sql \
-    && rm -f /var/www/initial.sql.template
+# Entry point for out image
+COPY ./tools/configure.sh /tmp/configure.sh
 
-# Start MariaDB Server
-CMD ["mysqld_safe"]
+ENTRYPOINT [ "sh", "/tmp/configure.sh" ]

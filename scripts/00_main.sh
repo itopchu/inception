@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Necessary library for below checks.
+apt-get install lsb-release
+
 # Check if /etc/os-release file exists
 if [ -e /etc/os-release ]; then
     # Source the os-release file to get the distribution ID

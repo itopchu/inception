@@ -8,6 +8,9 @@ NC='\033[0m' # No Color
 
 echo -e "${CYAN}03_allow_ports.sh started${NC}"
 
+service ssh start
+service ssh enable
+
 # Allow ports for connections
 ufw allow 443/tcp
 ufw allow 80/tcp

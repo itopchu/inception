@@ -11,7 +11,7 @@ echo -e "${CYAN}01_setup_packages.sh started${NC}"
 # Install necessary packages
 apt update
 apt upgrade
-apt install -y sudo ufw docker docker-compose make openbox xinit kitty firefox-esr
+apt install -y sudo ufw docker docker-compose make openbox xinit kitty firefox-esr openssh-server
 
 # Check if the installation was successful
 if [ $? -eq 0 ]; then

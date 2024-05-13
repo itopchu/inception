@@ -9,11 +9,11 @@ build:
 	chmod +x ./srcs/requirements/tools/certificate.sh
 	./srcs/requirements/tools/security.sh
 	./srcs/requirements/tools/certificate.sh $(USER)
-	docker-compose -f $(COMPOSE_FILE) -p $(NAME) build
+	docker-compose -f $(COMPOSE_FILE) --env-file $(ENV_FILE) -p $(NAME) build
 
 # Start containers
 start: build
-	docker-compose -f $(COMPOSE_FILE) -p $(NAME) up -d
+	docker-compose -f $(COMPOSE_FILE) --env-file $(ENV_FILE) -p $(NAME) up -d
 
 # Stop containers
 stop:
