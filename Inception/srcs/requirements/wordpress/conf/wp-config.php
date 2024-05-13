@@ -80,12 +80,8 @@ $table_prefix = 'wp_';
 define( 'WP_DEBUG', false );
 
 /* That's all, stop editing! Happy publishing. */
-
-/** Old default value: */
-/** define( 'ABSPATH', dirname( __FILE__ ) . '/' ) */;
-/** Absolute path to the WordPress directory. */
 if ( ! defined( 'ABSPATH' ) ) {
-    define( 'ABSPATH', '/var/www/html/wordpress');
+	define( 'ABSPATH', __DIR__ . '/' );
 }
 
 /** Sets up WordPress vars and included files. */
