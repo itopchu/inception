@@ -14,9 +14,7 @@ if [ ! -d "/var/lib/mysql/mysql" ]; then
 fi
 
 # Configure the MySQL database
-./configure_database.sh
-
-rm -f /tmp/configure_database.sh.template
+/tmp/configure_database.sh
 
 # Allow remote connections
 sed -i "s|skip-networking|# skip-networking|g" /etc/mysql/mariadb.conf.d/50-server.cnf

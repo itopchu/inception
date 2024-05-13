@@ -28,7 +28,7 @@ ARG WP_PWD
 # curl is needed to download WordPress Command Line Interface.
 RUN apt-get update
 RUN apt-get install -y \
-    php7.3 \
+    php7.4 \
     php-mysqli \
     php-fpm \
     mariadb-client \
@@ -36,15 +36,15 @@ RUN apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-COPY ./www.conf /etc/php/7.3/fpm/pool.d
+COPY ./conf/www.conf /etc/php/7.4/fpm/pool.d
 
 ADD https://wordpress.org/wordpress-6.5.3.tar.gz /var/www/
-RUN cd /var/www && tar -xzvf wordpress.org/wordpress-6.5.3.tar.gz
-RUN rm -f /var/www/wordpress.org/wordpress-6.5.3.tar.gz
+RUN cd /var/www && tar -xzvf wordpress-6.5.3.tar.gz
+RUN rm -f /var/www/wordpress-6.5.3.tar.gz
 RUN rm -f /var/www/wordpress/wp-config-sample.php
 COPY ./conf/wp-config.php ./var/www/wordpress/wp-config.php.template
 RUN envsubst '$MYSQL_DATABASE $MYSQL_USER $MYSQL_PASSWORD $MYSQL_HOST $AUTH_KEY $SECURE_AUTH_KEY $LOGGED_IN_KEY $NONCE_KEY $AUTH_SALT $SECURE_AUTH_SALT $LOGGED_IN_SALT $NONCE_SALT' < ./var/www/wordpress/wp-config.php.template > ./var/www/wordpress/wp-config.php \
     && rm -f /var/www/html/wp-config.php.template
 
 RUN mkdir -p ./run/php/
-CMD ./user/sbin/php-fpm7.3 -F
+CMD /usr/sbin/php-fpm7.4 -F

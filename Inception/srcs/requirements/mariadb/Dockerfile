@@ -17,8 +17,8 @@ ARG MYSQL_USER
 ARG MYSQL_PASSWORD
 
 # Variable expansion in config file
-COPY ./tools/configure_database.sh /tmp/configure_database.sh.template
-RUN envsubst '$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE $MYSQL_USER $MYSQL_PASSWORD' < /tmp/configure_database.sh.template > /tmp/configure_database.sh
+COPY ./tools/configure_database.sh /tmp/configure_database.sh
+RUN envsubst '$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE $MYSQL_USER $MYSQL_PASSWORD' < /tmp/configure_database.sh > /tmp/configure_database.sh
 
 # Entry point for out image
 COPY ./tools/configure.sh /tmp/configure.sh
