@@ -14,6 +14,7 @@ if [ ! -d "/var/lib/mysql/mysql" ]; then
 fi
 
 # Configure the MySQL database
+chmod +x /tmp/configure_database.sh
 /tmp/configure_database.sh
 
 # Allow remote connections
