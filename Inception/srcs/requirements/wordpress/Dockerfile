@@ -17,11 +17,11 @@ RUN apt-get update \
 
 
 RUN if [ ! -d /var/www/html/ ]; then \
-        mkdir -p /var/www/html \
-        curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
-        chmod +x wp-cli.phar \
-        mv wp-cli.phar /usr/local/bin/wp \
-        wp core download --allow-root \
+        mkdir -p /var/www/html; \
+        curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar; \
+        chmod +x wp-cli.phar; \
+        mv wp-cli.phar /usr/local/bin/wp; \
+        wp core download --allow-root; \
     fi
 
 ARG DOMAIN_NAME
@@ -46,12 +46,13 @@ ARG WP_PWD
 
 # Config cloning from host machine
 COPY ./conf/wp-config.php /var/www/html/wp-config.php.template
+
 # Variable expansion in config file
-RUN envsubst '$MYSQL_DATABASE $MYSQL_USER $MYSQL_PASSWORD $MYSQL_HOST $AUTH_KEY $SECURE_AUTH_KEY $LOGGED_IN_KEY $NONCE_KEY $AUTH_SALT $SECURE_AUTH_SALT $LOGGED_IN_SALT $NONCE_SALT' < /var/www/html/wp-config.php.template > /var/www/html/wp-config.php \
-    && rm -f /var/www/html/wp-config.php.template \
-    && wp core install --url=$DOMAIN_NAME/ --title=$WP_TITLE --admin_user=$WP_ADMIN_USR --admin_password=$WP_ADMIN_PWD --admin_email=$WP_ADMIN_EMAIL --skip-email --allow-root \
+RUN wp core install --url=$DOMAIN_NAME/ --title=$WP_TITLE --admin_user=$WP_ADMIN_USR --admin_password=$WP_ADMIN_PWD --admin_email=$WP_ADMIN_EMAIL --skip-email --allow-root \
     && wp user create $WP_USR $WP_EMAIL --role=author --user_pass=$WP_PWD --allow-root \
-    && mkdir /run/php
+    && mkdir /run/php \
+    && envsubst '$MYSQL_DATABASE $MYSQL_USER $MYSQL_PASSWORD $MYSQL_HOST $AUTH_KEY $SECURE_AUTH_KEY $LOGGED_IN_KEY $NONCE_KEY $AUTH_SALT $SECURE_AUTH_SALT $LOGGED_IN_SALT $NONCE_SALT' < /var/www/html/wp-config.php.template > /var/www/html/wp-config.php \
+    && rm -f /var/www/html/wp-config.php.template
 
 # -fpm.sock listen to 9000
 RUN php_version=$(php -v | grep -P 'PHP \K[0-9]+\.[0-9]+' | head -n 1) \
