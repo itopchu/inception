@@ -45,8 +45,8 @@ RUN apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-ARG PHP_VERSION=$(dpkg -l | grep '^ii' | grep 'php' | awk '{split($3, ver, "."); print ver[1]"."ver[2]}')
-
+RUN PHP_VERSION=$(dpkg -l | grep '^ii' | grep 'php' | awk '{split($3, ver, "."); print ver[1]"."ver[2]}')
+ENV PHP_VERSION=${PHP_VERSION}
 # Configure PHP-FPM
 RUN sed -i "s|^listen = 127.0.0.1:9000|listen = /run/php/php${PHP_VERSION}-fpm.sock|g" /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf && \
     sed -i "s|^;listen.owner = nobody|listen.owner = www-data|g" /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf && \
