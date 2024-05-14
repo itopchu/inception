@@ -23,7 +23,7 @@ define( 'DB_PASSWORD', '${MYSQL_PASSWORD}' );
 define( 'DB_HOST', '${MYSQL_HOST}' );
 define( 'DB_CHARSET', 'utf8' );
 define( 'DB_COLLATE', '' );
-define('FS_METHOD','direct');
+define( 'FS_METHOD','direct' );
 define( 'AUTH_KEY',         '${AUTH_KEY}' );
 define( 'SECURE_AUTH_KEY',  '${SECURE_AUTH_KEY}' );
 define( 'LOGGED_IN_KEY',    '${LOGGED_IN_KEY}' );
@@ -42,7 +42,7 @@ EOF
 fi
 
 # Run additional WP-CLI commands
-wp core install \
+wp --allow-root core install \
     --url="${DOMAIN_NAME}/wordpress" \
     --title="${WP_TITLE}" \
     --admin_user="${WP_ADMIN_USR}" \
@@ -50,8 +50,8 @@ wp core install \
     --admin_email="${WP_ADMIN_EMAIL}" \
     --skip-email
 
-wp user create "${WP_USR}" "${WP_EMAIL}" \
+wp --allow-root user create "${WP_USR}" "${WP_EMAIL}" \
     --role=author \
     --user_pass="${WP_PWD}"
 
-wp theme install inspiro --activate
+wp --allow-root theme install inspiro --activate
