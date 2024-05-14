@@ -23,7 +23,6 @@ COPY ./conf/nginx.conf /etc/nginx/conf.d/nginx.conf.template
 
 # Variable expansion in config file
 RUN envsubst '$DOMAIN_NAME' < /etc/nginx/conf.d/nginx.conf.template > /etc/nginx/conf.d/nginx.conf
-RUN cat /etc/nginx/conf.d/nginx.conf
 RUN rm -f /etc/nginx/conf.d/nginx.conf.template
 
 # Start NGINX Server

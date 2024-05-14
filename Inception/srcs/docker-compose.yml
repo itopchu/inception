@@ -18,7 +18,7 @@ services:
     networks:
       - webserv
     volumes:
-     - /home/${USER_NAME}/data/wordpress:/var/www/
+     - /home/${USER_NAME}/data/wordpress:/var/www/html
 
   mariadb:
     env_file:
@@ -76,7 +76,7 @@ services:
       - website
       - webserv
     volumes:
-      - /home/${USER_NAME}/data/wordpress:/var/www/
+      - /home/${USER_NAME}/data/wordpress:/var/www/html
 
 networks:
   webserv:
