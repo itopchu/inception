@@ -15,7 +15,7 @@ mv wp-cli.phar /usr/local/bin/wp
 # Check if wp-config.php already exists
 if [ ! -f "/var/www/wp-config.php" ]; then
     # Create wp-config.php
-    cat << EOF > /var/www/wp-config.php
+    cat << 'EOF' > /var/www/wp-config.php
 <?php
 define( 'DB_NAME', '${MYSQL_DATABASE}' );
 define( 'DB_USER', '${MYSQL_USER}' );
@@ -32,7 +32,7 @@ define( 'AUTH_SALT',        '${AUTH_SALT}' );
 define( 'SECURE_AUTH_SALT', '${SECURE_AUTH_SALT}' );
 define( 'LOGGED_IN_SALT',   '${LOGGED_IN_SALT}' );
 define( 'NONCE_SALT',       '${NONCE_SALT}' );
-\$table_prefix = 'wp_';
+$table_prefix = 'wp_';
 define( 'WP_DEBUG', false );
 if ( ! defined( 'ABSPATH' ) ) {
     define( 'ABSPATH', __DIR__ . '/' );
