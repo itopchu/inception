@@ -38,12 +38,13 @@ mkdir -p "$destination"
 # Check if .crt and .key files already exist, move them if they don't
 if [ ! -e "$destination/$username.42.fr.crt" ]; then
     mv "$username.42.fr.crt" "$destination"
-    chmod 777 "$destination/$username.42.fr.crt"
+    chmod 644 "$destination/$username.42.fr.crt"
 fi
 
 if [ ! -e "$destination/$username.42.fr.key" ]; then
     mv "$username.42.fr.key" "$destination"
-    chmod 777 "$destination/$username.42.fr.key"
+    chmod 600 "$destination/$username.42.fr.key"
 fi
 
-rm -f *.42.fr*
+# Remove intermediate files
+rm -f server.key server.csr

@@ -15,15 +15,16 @@ ARG DOMAIN_NAME
 # Certificate cloning from host machine
 RUN mkdir -p /etc/nginx/
 
-COPY ./tools/${DOMAIN_NAME}.crt /etc/ssl/certs/nginx.crt
-COPY ./tools/${DOMAIN_NAME}.key /etc/ssl/private/nginx.key
+COPY ./tools/${DOMAIN_NAME}.crt /etc/nginx/ssl/
+COPY ./tools/${DOMAIN_NAME}.key /etc/nginx/ssl/
 
 # Config cloning from host machine
-COPY ./conf/nginx.conf /etc/nginx/sites-available/nginx.conf.template
+COPY ./conf/nginx.conf /etc/nginx/conf.d/nginx.conf.template
 
 # Variable expansion in config file
-RUN envsubst '$DOMAIN_NAME' < /etc/nginx/sites-available/nginx.conf.template > /etc/nginx/sites-available/nginx.conf
-RUN rm -f /etc/nginx/sites-available/nginx.conf.template
+RUN envsubst '$DOMAIN_NAME' < /etc/nginx/conf.d/nginx.conf.template > /etc/nginx/conf.d/nginx.conf
+RUN cat /etc/nginx/conf.d/nginx.conf
+RUN rm -f /etc/nginx/conf.d/nginx.conf.template
 
 # Start NGINX Server
 CMD ["nginx", "-g", "daemon off;"]
