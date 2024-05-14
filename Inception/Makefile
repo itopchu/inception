@@ -1,9 +1,11 @@
 USER = itopchu
 NAME = inception
 COMPOSE_FILE = srcs/docker-compose.yml
+ENV_FILE = srcs/.env
+
 # Start containers
 start: build
-	docker-compose -f $(COMPOSE_FILE) -p $(NAME) up -d
+	docker-compose -f $(COMPOSE_FILE) --env-file $(ENV_FILE) -p $(NAME) up -d
 
 # Build Docker containers
 build:
@@ -12,7 +14,7 @@ build:
 	chmod +x ./srcs/requirements/tools/certificate.sh
 	./srcs/requirements/tools/security.sh
 	./srcs/requirements/tools/certificate.sh $(USER)
-	docker-compose -f $(COMPOSE_FILE) -p $(NAME) build
+	docker-compose -f $(COMPOSE_FILE) --env-file $(ENV_FILE) -p $(NAME) build
 
 # Stop containers
 stop:
@@ -31,4 +33,4 @@ restart:
 	@mkdir -p /home/$(USER)/data/{mariadb/,wordpress/}
 	docker-compose -f $(COMPOSE_FILE) up --build
 
-.PHONY: build start stop restart clean-build clean purge
+.PHONY: start build stop clean purge restart

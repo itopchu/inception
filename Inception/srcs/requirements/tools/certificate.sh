@@ -47,4 +47,4 @@ if [ ! -e "$destination/$username.42.fr.key" ]; then
 fi
 
 # Remove intermediate files
-rm -f server.key server.csr
+rm -f server.key server.csr $username.42.fr.key $username.42.fr.crt

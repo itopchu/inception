@@ -2,7 +2,7 @@ version: "3.3"
 
 services:
   nginx:
-   depends_on:
+    depends_on:
      - wordpress
     env_file:
       - .env
@@ -18,7 +18,7 @@ services:
     networks:
       - webserv
     volumes:
-     - /home/${USER_NAME}/data/wordpress:/var/www/html
+     - /home/${USER_NAME}/data/wordpress:/var/www/
 
   mariadb:
     env_file:
@@ -76,7 +76,7 @@ services:
       - website
       - webserv
     volumes:
-      - /home/${USER_NAME}/data/wordpress:/var/www/html
+      - /home/${USER_NAME}/data/wordpress:/var/www/
 
 networks:
   webserv:
