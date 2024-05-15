@@ -27,6 +27,9 @@ clean: stop
 # Remove all containers and associated volumes
 purge: clean
 	docker system prune -f
+	docker system prune --all --force --volumes
+	docker network prune --force
+	docker volume prune --force
 
 # Restart containers
 restart:
