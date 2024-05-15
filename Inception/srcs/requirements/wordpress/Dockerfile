@@ -66,10 +66,15 @@ RUN wget https://wordpress.org/latest.tar.gz && \
     rm -rf wordpress latest.tar.gz
 
 # Copy and execute script for creating wp-config.php
-COPY ./tools/wp-config-create.sh ./wp-config-create.sh.template
-RUN envsubst '$DOMAIN_NAME $MYSQL_DATABASE $MYSQL_USER $MYSQL_PASSWORD $MYSQL_HOST $AUTH_KEY $SECURE_AUTH_KEY $LOGGED_IN_KEY $NONCE_KEY $AUTH_SALT $SECURE_AUTH_SALT $LOGGED_IN_SALT $NONCE_SALT $WP_TITLE $WP_ADMIN_USR $WP_ADMIN_PWD $WP_ADMIN_EMAIL $WP_USR $WP_EMAIL $WP_PWD' \
-    < ./wp-config-create.sh.template > ./wp-config-create.sh && \
-    rm -f ./wp-config-create.sh.template && \
+COPY ./conf/wp-config.php /tmp/wp-config.php.template
+RUN envsubst '$MYSQL_DATABASE $MYSQL_USER $MYSQL_PASSWORD $MYSQL_HOST $AUTH_KEY $SECURE_AUTH_KEY $LOGGED_IN_KEY $NONCE_KEY $AUTH_SALT $SECURE_AUTH_SALT $LOGGED_IN_SALT $NONCE_SALT' \
+    < /tmp/wp-config.php.template > /tmp/wp-config.php && \
+    rm -f /tmp/wp-config.php.template
+
+COPY ./tools/wp-config-create.sh /tmp/wp-config-create.sh.template
+RUN envsubst '$DOMAIN_NAME $MYSQL_DATABASE $WP_TITLE $WP_ADMIN_USR $WP_ADMIN_PWD $WP_ADMIN_EMAIL $WP_USR $WP_EMAIL $WP_PWD' \
+    < /tmp/wp-config-create.sh.template > /tmp/wp-config-create.sh \
+    rm -f /tmp/wp-config-create.sh.template \
     bash ./wp-config-create.sh && \
     rm ./wp-config-create.sh && \
     chmod -R 0777 wp-content/
