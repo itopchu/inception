@@ -72,11 +72,11 @@ RUN envsubst '$MYSQL_DATABASE $MYSQL_USER $MYSQL_PASSWORD $MYSQL_HOST $AUTH_KEY 
     rm -f /tmp/wp-config.php.template
 
 COPY ./tools/wp-config-create.sh /tmp/wp-config-create.sh.template
-RUN envsubst '$DOMAIN_NAME $MYSQL_DATABASE $WP_TITLE $WP_ADMIN_USR $WP_ADMIN_PWD $WP_ADMIN_EMAIL $WP_USR $WP_EMAIL $WP_PWD' \
-    < /tmp/wp-config-create.sh.template > /tmp/wp-config-create.sh \
-    rm -f /tmp/wp-config-create.sh.template \
-    bash ./wp-config-create.sh && \
-    rm ./wp-config-create.sh && \
+RUN envsubst '$DOMAIN_NAME $WP_TITLE $WP_ADMIN_USR $WP_ADMIN_PWD $WP_ADMIN_EMAIL $WP_USR $WP_EMAIL $WP_PWD' \
+    < /tmp/wp-config-create.sh.template > /tmp/wp-config-create.sh && \
+    rm -f /tmp/wp-config-create.sh.template && \
+    bash /tmp/wp-config-create.sh && \
+    rm -f /tmp/wp-config-create.sh && \
     chmod -R 0777 wp-content/
 
 WORKDIR /var/www/html/wordpress
