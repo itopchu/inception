@@ -2,6 +2,8 @@ version: "3.3"
 
 services:
   nginx:
+    container_name: nginx
+    restart: always
     depends_on:
      - wordpress
     env_file:
@@ -11,36 +13,31 @@ services:
       dockerfile: Dockerfile
       args:
         DOMAIN_NAME: ${DOMAIN_NAME}
-    container_name: nginx
     ports:
       - "443:443"
-    restart: always
     networks:
       - webserv
     volumes:
      - /home/${USER_NAME}/data/wordpress:/var/www/html
 
   mariadb:
+    container_name: mariadb
+    restart: always
     env_file:
       - .env
     build:
       context: ./requirements/mariadb/
       dockerfile: Dockerfile
-      args:
-        MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-        MYSQL_DATABASE: ${MYSQL_DATABASE}
-        MYSQL_USER: ${MYSQL_USER}
-        MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-    container_name: mariadb
     ports:
       - "3306:3306"
-    restart: always
     networks:
       - website
     volumes:
       - /home/${USER_NAME}/data/mariadb:/var/lib/mysql
 
   wordpress:
+    container_name: wordpress
+    restart: always
     depends_on:
       - mariadb
     env_file:
@@ -49,31 +46,9 @@ services:
       context: ./requirements/wordpress/
       dockerfile: Dockerfile
       args:
-        DOMAIN_NAME: ${DOMAIN_NAME}
-        MYSQL_DATABASE: ${MYSQL_DATABASE}
-        MYSQL_USER: ${MYSQL_USER}
-        MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-        MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-        MYSQL_HOST: ${MYSQL_HOST}
-        AUTH_KEY: ${AUTH_KEY}
-        SECURE_AUTH_KEY: ${SECURE_AUTH_KEY}
-        LOGGED_IN_KEY: ${LOGGED_IN_KEY}
-        NONCE_KEY: ${NONCE_KEY}
-        AUTH_SALT: ${AUTH_SALT}
-        SECURE_AUTH_SALT: ${SECURE_AUTH_SALT}
-        LOGGED_IN_SALT: ${LOGGED_IN_SALT}
-        NONCE_SALT: ${NONCE_SALT}
-        WP_TITLE: ${WP_TITLE}
-        WP_ADMIN_USR: ${WP_ADMIN_USR}
-        WP_ADMIN_PWD: ${WP_ADMIN_PWD}
-        WP_ADMIN_EMAIL: ${WP_ADMIN_EMAIL}
-        WP_USR: ${WP_USR}
-        WP_EMAIL: ${WP_EMAIL}
-        WP_PWD: ${WP_PWD}
-    container_name: wordpress
+        PHP_VERSION: ${PHP_VERSION}
     ports:
       - "9000:9000"
-    restart: always
     networks:
       - website
       - webserv
@@ -85,20 +60,3 @@ networks:
     driver: bridge
   website:
     driver: bridge
-
-
-# volumes:
-#   wordpress-vol:
-#     name: wordpress
-#     driver: local
-#     driver_opts:
-#       device: /home/${USER_NAME}/data/wordpress
-#       o: bind
-#       type: none
-#   mariadb-vol:
-#     name: mariadb
-#     driver: local
-#     driver_opts:
-#       device: /home/${USER_NAME}/data/mariadb
-#       o: bind
-#       type: none

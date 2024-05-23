@@ -1,39 +1,55 @@
 USER = itopchu
 NAME = inception
-COMPOSE_FILE = srcs/docker-compose.yml
-ENV_FILE = srcs/.env
+COMPOSE_DIR = ./srcs
+ENV_FILE = $(COMPOSE_DIR)/.env
 
-# Start containers
-start: build
-	docker-compose -f $(COMPOSE_FILE) --env-file $(ENV_FILE) -p $(NAME) up -d
+all: volume security certs build up
 
-# Build Docker containers
 build:
-	@mkdir -p /home/$(USER)/data/{mariadb/,wordpress/}
-	chmod +x ./srcs/requirements/tools/security.sh
-	chmod +x ./srcs/requirements/tools/certificate.sh
-	./srcs/requirements/tools/security.sh
-	./srcs/requirements/tools/certificate.sh $(USER)
-	docker-compose -f $(COMPOSE_FILE) --env-file $(ENV_FILE) -p $(NAME) build
+	@echo "Building " $(NAME) "."
+	docker-compose --project-directory $(COMPOSE_DIR) -p $(NAME) build
 
-# Stop containers
+up:
+	@echo "Starting " $(NAME) "."
+	docker-compose --project-directory $(COMPOSE_DIR) -p $(NAME) up -d
+
 stop:
-	@ docker-compose -f $(COMPOSE_FILE) down
+	@echo "Stopping " $(NAME) "."
+	docker-compose --project-directory $(COMPOSE_DIR) -p $(NAME) stop
 
-# Clean up containers
-clean: stop
-	@ rm -rf /home/$(USER)/data/
+down:
+	@echo "Stopping and removing " $(NAME) " containers and networks."
+	docker-compose --project-directory $(COMPOSE_DIR) -p $(NAME) down
 
-# Remove all containers and associated volumes
-purge: clean
-	docker system prune -f
-	docker system prune --all --force --volumes
-	docker network prune --force
-	docker volume prune --force
+clean:
+	@echo "Stopping and removing " $(NAME) " containers, networks, images, and volumes."
+	docker-compose --project-directory $(COMPOSE_DIR) -p $(NAME) down --volumes --remove-orphans
 
-# Restart containers
-restart:
+prune: clean
+	@echo "Pruning unused Docker resources..."
+	@docker system prune --all --force --volumes
+
+remake: clean build up
+	@echo "Rebuilt and restarted " $(NAME) " containers."
+
+restart: stop up
+	@echo "Restarted " $(NAME) " containers."
+
+logs:
+	docker-compose --project-directory $(COMPOSE_DIR) logs -f
+
+volume:
+	@echo "Creating volumes " $(NAME) "."
 	@mkdir -p /home/$(USER)/data/{mariadb/,wordpress/}
-	docker-compose -f $(COMPOSE_FILE) up --build
 
-.PHONY: start build stop clean purge restart
+security:
+	@echo "Receiving security keys " $(NAME) "."
+	chmod +x ./srcs/requirements/tools/security.sh
+	./srcs/requirements/tools/security.sh
+
+certs:
+	@echo "Generating certificates " $(NAME) "."
+	chmod +x ./srcs/requirements/tools/certificate.sh
+	./srcs/requirements/tools/certificate.sh $(USER)
+
+.PHONY: all build up stop down clean prune remake restart logs volume security certs

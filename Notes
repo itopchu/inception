@@ -31,13 +31,14 @@ Virtual machine is 'debian-11.9.0-amd64-netinst'
     Write the changes to disk:
       yes
     Software selection:
-      unselect everything except 'SSH server'
+      unselect everything except 'SSH server and essential'
     Install the GRUB boot to primary drive:
       yes
       /dev/sda
-    continue
-
-login as root
+      continue
 
 Connect with OS terminal:
   ssh root@localhost -p 2222
+
+Install git for further process:
+  apt-get install git

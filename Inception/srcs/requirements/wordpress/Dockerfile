@@ -4,82 +4,39 @@ FROM debian:bullseye
 # Port for webserv connection
 EXPOSE 9000
 
-ARG DOMAIN_NAME
-ARG MYSQL_DATABASE
-ARG MYSQL_USER
-ARG MYSQL_PASSWORD
-ARG MYSQL_ROOT_PASSWORD
-ARG MYSQL_HOST
-ARG AUTH_KEY
-ARG SECURE_AUTH_KEY
-ARG LOGGED_IN_KEY
-ARG NONCE_KEY
-ARG AUTH_SALT
-ARG SECURE_AUTH_SALT
-ARG LOGGED_IN_SALT
-ARG NONCE_SALT
-ARG WP_TITLE
-ARG WP_ADMIN_USR
-ARG WP_ADMIN_PWD
-ARG WP_ADMIN_EMAIL
-ARG WP_USR
-ARG WP_EMAIL
-ARG WP_PWD
+WORKDIR /var/www
 
-# gettext-base is needed for env expasion
-# curl is needed to download WordPress Command Line Interface.
+ARG PHP_VERSION
+
 RUN apt-get update
 RUN apt-get upgrade -y
 RUN apt-get install -y \
-    php \
-    php-fpm \
-    php-json \
-    php-curl \
-    php-mbstring \
-    php-xml \
-    php-zip \
-    openssl \
-    php-common \
-    php-mysql \
-    wget \
-    unzip \
-    gettext-base \
+    php-mysql wget tar php${PHP_VERSION} \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# RUN PHP_VERSION=$(dpkg -l | grep '^ii' | grep 'php' | awk '{split($3, ver, "."); print ver[1]"."ver[2]}')
-# ENV PHP_VERSION=${PHP_VERSION}
-ARG PHP_VERSION=7.4
+# Step 1: Download the latest version of WordPress
+# Step 2: Extract the downloaded tar.gz file
+# Step 3: Download the WP-CLI tool
+# Step 4: Make the WP-CLI tool executable
+# Step 5: Move WP-CLI to a directory in the system PATH
+# Step 6: Remove the downloaded tar.gz file to clean up
+# Step 7: Create a directory for PHP-FPM to run
+# Step 8: Change the ownership of the WordPress directory to www-data user and group
+# Step 9: Set the permissions of the WordPress directory to 755
 
-# Configure PHP-FPM
-RUN sed -i "s|^listen = 127.0.0.1:9000|listen = /run/php/php${PHP_VERSION}-fpm.sock|g" /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf && \
-    sed -i "s|^;listen.owner = nobody|listen.owner = www-data|g" /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf && \
-    sed -i "s|^;listen.group = nobody|listen.group = www-data|g" /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
-
-# Set working directory
-WORKDIR /var/www
-
-# Download and install WordPress
 RUN wget https://wordpress.org/latest.tar.gz && \
     tar -xzvf latest.tar.gz && \
-    cp -rf wordpress/* . && \
-    rm -rf wordpress latest.tar.gz
+    wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+    chmod +x wp-cli.phar && \
+    mv wp-cli.phar /usr/local/bin/wp && \
+    rm latest.tar.gz && \
+    mkdir -p /run/php && \
+    chown -R www-data:www-data /var/www/wordpress && \
+    chmod -R 755 /var/www/wordpress
 
-# Copy and execute script for creating wp-config.php
-COPY ./conf/wp-config.php /tmp/wp-config.php.template
-RUN envsubst '$MYSQL_DATABASE $MYSQL_USER $MYSQL_PASSWORD $MYSQL_HOST $AUTH_KEY $SECURE_AUTH_KEY $LOGGED_IN_KEY $NONCE_KEY $AUTH_SALT $SECURE_AUTH_SALT $LOGGED_IN_SALT $NONCE_SALT' \
-    < /tmp/wp-config.php.template > /tmp/wp-config.php && \
-    rm -f /tmp/wp-config.php.template
+COPY ./conf/www.conf /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
 
-COPY ./tools/wp-config-create.sh /tmp/wp-config-create.sh.template
-RUN envsubst '$DOMAIN_NAME $WP_TITLE $WP_ADMIN_USR $WP_ADMIN_PWD $WP_ADMIN_EMAIL $WP_USR $WP_EMAIL $WP_PWD' \
-    < /tmp/wp-config-create.sh.template > /tmp/wp-config-create.sh && \
-    rm -f /tmp/wp-config-create.sh.template && \
-    bash /tmp/wp-config-create.sh && \
-    rm -f /tmp/wp-config-create.sh && \
-    chmod -R 0777 wp-content/
+COPY ./tools/wp-config-create.sh .
 
-WORKDIR /var/www/html/wordpress
-
-# Start PHP-FPM
-CMD ["php-fpm${PHP_VERSION}", "-F"]
+CMD ["sh", "wp-config-create.sh"]

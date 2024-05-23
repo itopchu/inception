@@ -1,36 +1,42 @@
 #!/bin/bash
 
-# Install WP-CLI dependencies
-apt-get update && apt-get install -y \
-    wget \
-    unzip \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+if [ ! -f "/var/www/wordpress/wp-config.php" ]; then
 
-# Download and install WP-CLI
-wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-chmod +x wp-cli.phar
-mv wp-cli.phar /usr/local/bin/wp
+    # Replace placeholders in the wp-config-sample.php file with environment variables
+	sed -i "s/username_here/$MYSQL_USER/g" wordpress/wp-config-sample.php
+	sed -i "s/password_here/$MYSQL_PASSWORD/g" wordpress/wp-config-sample.php
+	sed -i "s/localhost/$MYSQL_HOST/g" wordpress/wp-config-sample.php
+	sed -i "s/database_name_here/$MYSQL_DATABASE/g" wordpress/wp-config-sample.php
 
-# Check if wp-config.php already exists
-if [ ! -f "/var/www/wp-config.php" ]; then
-    # place wp-config.php
-    mv /tmp/wp-config.php /var/www/wp-config.php
-else
-    rm -f /tmp/wp-config.php
+    # Replace unique phrase placeholders with actual secret keys
+    sed -i "s/put your unique phrase here/$AUTH_KEY/g" wordpress/wp-config-sample.php
+    sed -i "s/put your unique phrase here/$SECURE_AUTH_KEY/g" wordpress/wp-config-sample.php
+    sed -i "s/put your unique phrase here/$LOGGED_IN_KEY/g" wordpress/wp-config-sample.php
+    sed -i "s/put your unique phrase here/$NONCE_KEY/g" wordpress/wp-config-sample.php
+    sed -i "s/put your unique phrase here/$AUTH_SALT/g" wordpress/wp-config-sample.php
+    sed -i "s/put your unique phrase here/$SECURE_AUTH_SALT/g" wordpress/wp-config-sample.php
+    sed -i "s/put your unique phrase here/$LOGGED_IN_SALT/g" wordpress/wp-config-sample.php
+    sed -i "s/put your unique phrase here/$NONCE_SALT/g" wordpress/wp-config-sample.php
+
+    # Copy the modified wp-config-sample.php to wp-config.php
+    cp wordpress/wp-config-sample.php wordpress/wp-config.php
+
+    wp core install \
+	    --allow-root \
+	    --path=/var/www/wordpress/ \
+	    --url="$DOMAIN_NAME" \
+	    --title="$WP_TITLE" \
+	    --admin_user="$WP_ADMIN_USR" \
+	    --admin_password="$WP_ADMIN_PWD" \
+	    --admin_email="$WP_ADMIN_EMAIL" \
+	    --skip-email
+
+    wp user create \
+	    --allow-root \
+	    --path=/var/www/wordpress/ \
+	    "$WP_USR" \
+	    "$WP_EMAIL" \
+	    --user_pass="$WP_PWD"
 fi
 
-# Run additional WP-CLI commands
-wp --allow-root core install \
-    --url="${DOMAIN_NAME}/wordpress" \
-    --title="${WP_TITLE}" \
-    --admin_user="${WP_ADMIN_USR}" \
-    --admin_password="${WP_ADMIN_PWD}" \
-    --admin_email="${WP_ADMIN_EMAIL}" \
-    --skip-email
-
-wp --allow-root user create "${WP_USR}" "${WP_EMAIL}" \
-    --role=author \
-    --user_pass="${WP_PWD}"
-
-wp --allow-root theme install inspiro --activate
+php-fpm${PHP_VERSION} -F
