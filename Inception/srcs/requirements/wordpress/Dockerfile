@@ -11,7 +11,7 @@ ARG PHP_VERSION
 RUN apt-get update
 RUN apt-get upgrade -y
 RUN apt-get install -y \
-    php-mysql wget tar php${PHP_VERSION} \
+    php${PHP_VERSION}-fpm php-mysql wget tar \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
