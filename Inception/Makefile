@@ -1,29 +1,30 @@
 USER = itopchu
 NAME = inception
 COMPOSE_DIR = ./srcs
+COMPOSE_FILE = $(COMPOSE_DIR)/docker-compose.yml
 ENV_FILE = $(COMPOSE_DIR)/.env
 
 all: volume security certs build up
 
 build:
 	@echo "Building " $(NAME) "."
-	docker-compose --project-directory $(COMPOSE_DIR) -p $(NAME) build
+	docker-compose -f $(COMPOSE_FILE) -p $(NAME) build
 
 up:
 	@echo "Starting " $(NAME) "."
-	docker-compose --project-directory $(COMPOSE_DIR) -p $(NAME) up -d
+	docker-compose -f $(COMPOSE_FILE) -p $(NAME) up -d
 
 stop:
 	@echo "Stopping " $(NAME) "."
-	docker-compose --project-directory $(COMPOSE_DIR) -p $(NAME) stop
+	docker-compose -f $(COMPOSE_FILE) -p $(NAME) stop
 
 down:
 	@echo "Stopping and removing " $(NAME) " containers and networks."
-	docker-compose --project-directory $(COMPOSE_DIR) -p $(NAME) down
+	docker-compose -f $(COMPOSE_FILE) -p $(NAME) down
 
 clean:
 	@echo "Stopping and removing " $(NAME) " containers, networks, images, and volumes."
-	docker-compose --project-directory $(COMPOSE_DIR) -p $(NAME) down --volumes --remove-orphans
+	docker-compose -f $(COMPOSE_FILE) -p $(NAME) down --volumes --remove-orphans
 
 prune: clean
 	@echo "Pruning unused Docker resources..."
@@ -36,7 +37,7 @@ restart: stop up
 	@echo "Restarted " $(NAME) " containers."
 
 logs:
-	docker-compose --project-directory $(COMPOSE_DIR) logs -f
+	docker-compose -f $(COMPOSE_FILE) logs -f
 
 volume:
 	@echo "Creating volumes " $(NAME) "."
