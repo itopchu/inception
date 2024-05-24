@@ -11,7 +11,7 @@ ARG PHP_VERSION
 RUN apt-get update
 RUN apt-get upgrade -y
 RUN apt-get install -y \
-    php php-mysql php-fpm mariadb-client
+    php php-mysql php-fpm mariadb-client wget
 
 RUN sed -i 's#listen = /run/php/php${PHP_VERSION}-fpm.sock#listen = 0.0.0.0:9000#' /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
 
@@ -35,9 +35,7 @@ RUN wget https://wordpress.org/latest.tar.gz && \
 
 COPY ./conf/www.conf /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
 
-RUN cd /var/www/html && wp core download --allow-root
+COPY ./tools/wp-config-create.sh /tmp/
+RUN chmod +x /tmp/wp-config-create.sh
 
-COPY ./tools/wp-config-create.sh .
-RUN chmod +x wp-config-create.sh
-
-CMD ["sh", "wp-config-create.sh"]
+CMD ["sh", "/tmp/wp-config-create.sh"]
