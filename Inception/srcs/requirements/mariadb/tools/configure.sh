@@ -1,10 +1,7 @@
 #!/bin/sh
 
-# Start the MariaDB server in the background
+# Start the MariaDB server
 mysqld_safe &
-
-# Wait for the MariaDB server to start
-sleep 5
 
 # Set the root password and create the database and user
 mariadb -u root <<EOF
