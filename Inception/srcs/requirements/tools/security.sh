@@ -16,16 +16,16 @@ while IFS= read -r line; do
     var_value=$(echo "$line" | sed -E "s/define\('[^']*',\s*'([^']*)'\);/\1/")
 
     # Check if variable name already exists in the .env file
-    if grep -q "^$var_name=" env_path && grep -q "^$var_name=." env_path; then
+    if grep -q "^$var_name=" $env_path && grep -q "^$var_name=." $env_path; then
         continue
     fi
 
     # Remove any existing variable from .env file
-    sed -i "/^$var_name/d" env_path
+    sed -i "/^$var_name/d" $env_path
 
     # Append the variable and its value to the .env file if there's an '=' and non-empty value
     if [ -n "$var_value" ]; then
-        echo "$var_name='$var_value'" >> env_path
+        echo "$var_name='$var_value'" >> $env_path
     fi
 done < keys.txt
 
