@@ -18,7 +18,7 @@ mkdir -p "$destination"
 openssl req -x509 -nodes -newkey rsa:4096 \
 	-keyout "$username.42.fr.key" \
 	-out "$username.42.fr.crt" \
-	-days 365 \ 
+	-days 365 \
 	-subj "/CN=$username.42.fr"
 
 # Check if .crt and .key files already exist, move them if they don't
