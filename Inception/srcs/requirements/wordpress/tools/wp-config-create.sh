@@ -4,10 +4,10 @@ if [ ! -f "/var/www/wordpress/wp-config.php" ]; then
 
     # Replace placeholders in the wp-config-sample.php file with environment variables
     # Replace unique phrase placeholders with actual secret keys
-    sed -i "s/username_here/$MYSQL_USER/g" \
-        -i "s/password_here/$MYSQL_PASSWORD/g" \
-        -i "s/localhost/$MYSQL_HOST/g" \
-        -i "s/database_name_here/$MYSQL_DATABASE/g" \
+    sed -e "s/username_here/$MYSQL_USER/g" \
+        -e "s/password_here/$MYSQL_PASSWORD/g" \
+        -e "s/localhost/$MYSQL_HOST/g" \
+        -e "s/database_name_here/$MYSQL_DATABASE/g" \
 		wordpress/wp-config-sample.php > wordpress/wp-config.php
 
     # Generate unique authentication keys and salts
