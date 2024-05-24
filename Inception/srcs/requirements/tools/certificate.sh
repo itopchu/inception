@@ -16,8 +16,8 @@ destination="/home/$username/Inception/srcs/requirements/nginx/tools"
 mkdir -p "$destination"
 
 openssl req -x509 -nodes -newkey rsa:4096 \
-	-keyout $username.42.fr.key \
-	-out $username.42.fr.crt \
+	-keyout "$username.42.fr.key" \
+	-out "$username.42.fr.crt" \
 	-days 365 \ 
 	-subj "/CN=$username.42.fr"
 
@@ -33,4 +33,4 @@ if [ ! -e "$destination/$username.42.fr.key" ]; then
 fi
 
 # Remove intermediate files
-rm -f $username.42.fr.key $username.42.fr.crt
+rm -f "$username.42.fr.key" "$username.42.fr.crt"
