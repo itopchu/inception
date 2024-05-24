@@ -1,24 +1,20 @@
-#!/bin/sh
+#!/bin/bash
 
-# Start the MariaDB server
-mysqld_safe &
+set -e
 
-# Set the root password and create the database and user
-mariadb -u root <<EOF
-CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE;
-CREATE USER IF NOT EXISTS '$MYSQL_USR'@'%' IDENTIFIED BY '$MYSQL_PWD';
-GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO '$MYSQL_USR'@'%';
-FLUSH PRIVILEGES;
-EOF
+if [ ! -d "/var/lib/mysql/"$MYSQL_NAME"" ]; then
+	mariadb-install-db --user=mysql
 
-# Alter the root user password
-mariadb -u root <<EOF
-ALTER USER 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD';
-FLUSH PRIVILEGES;
-EOF
+	echo "CREATE USER '$MYSQL_USR'@'%' IDENTIFIED BY '$MYSQL_PWD';" >> php_data.sql
+	echo "GRANT ALL PRIVILEGES ON *.* TO '$MYSQL_USR'@'%' WITH GRANT OPTION;" >> php_data.sql
+	echo "GRANT ALL PRIVILEGES ON *.* TO 'root'@localhost IDENTIFIED BY '$MYSQL_ROOT_PASSWORD' WITH GRANT OPTION;" >> php_data.sql
+    # why the fuck named wordpress?
+	echo "CREATE DATABASE IF NOT EXISTS wordpress;" >> php_data.sql
+  	echo "FLUSH PRIVILEGES;" >> php_data.sql
 
-# Shut down the MariaDB server
-mysqladmin -u root -p$MYSQL_ROOT_PASSWORD shutdown
+	service mariadb start
+	mariadb < php_data.sql
+	service mariadb stop
+fi
 
-# Start the MariaDB server in the foreground
-exec mysqld_safe
+mariadbd --user=mysql

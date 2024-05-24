@@ -1,19 +1,17 @@
 # base image for docker
 FROM debian:bullseye
 
+WORKDIR /var/www
+
 # Port for webserv connection
 EXPOSE 9000
-
-WORKDIR /var/www/html
 
 ARG PHP_VERSION
 
 RUN apt-get update
 RUN apt-get upgrade -y
 RUN apt-get install -y \
-    php php-mysql php-fpm mariadb-client wget
-
-RUN sed -i 's#listen = /run/php/php${PHP_VERSION}-fpm.sock#listen = 0.0.0.0:9000#' /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
+    php-mysql php${PHP_VERSION}-fpm wget
 
 # Step 1: Download the latest version of WordPress
 # Step 2: Extract the downloaded tar.gz file
@@ -27,15 +25,17 @@ RUN sed -i 's#listen = /run/php/php${PHP_VERSION}-fpm.sock#listen = 0.0.0.0:9000
 RUN wget https://wordpress.org/latest.tar.gz && \
     tar -xzvf latest.tar.gz && \
     wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
-    chmod +x wp-cli.phar && \
-    mv wp-cli.phar /usr/local/bin/wp && \
+    chmod +x wp-cli.phar && mv wp-cli.phar /usr/local/bin/wp && \
     rm latest.tar.gz && \
     mkdir -p /run/php && \
-    cd /var/www/html && wp core download --allow-root
+	chown -R www-data:www-data /var/www/wordpress && \
+	chmod -R 755 /var/www/wordpress && \
+    wp core download --allow-root
+    # cd /var/www/html && \
 
 COPY ./conf/www.conf /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
 
-COPY ./tools/wp-config-create.sh /tmp/
-RUN chmod +x /tmp/wp-config-create.sh
+COPY ./tools/wp-config-create.sh .
+RUN chmod +x wp-config-create.sh
 
-CMD ["sh", "/tmp/wp-config-create.sh"]
+CMD ["sh", "wp-config-create.sh"]
