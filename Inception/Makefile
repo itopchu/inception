@@ -45,7 +45,7 @@ volume:
 security:
 	@echo "Receiving security keys " $(NAME) "."
 	chmod +x ./srcs/requirements/tools/security.sh
-	./srcs/requirements/tools/security.sh
+	./srcs/requirements/tools/security.sh $(USER)
 
 certs:
 	@echo "Generating certificates " $(NAME) "."
