@@ -5,13 +5,14 @@ FROM debian:bullseye
 RUN apt update && \
     apt install -y mariadb-server
 
-RUN mkdir -p /run/mysqld && chown -R mysql:mysql /run/mysqld
-
 # Port for connection
 EXPOSE 3306
 
+RUN mkdir -p /var/run/mysqld && \
+	chmod 777 /var/run/mysqld
+
 # Copy database settings
-COPY conf/50-server.cnf /etc/mysql/50-server.cnf
+COPY conf/my.cnf /etc/mysql/my.cnf
 
 # Copy the initialization script
 COPY tools/configure.sh /tmp/
