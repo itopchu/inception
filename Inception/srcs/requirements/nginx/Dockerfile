@@ -24,7 +24,7 @@ COPY ./tools/index.html /var/www/html
 
 COPY ./conf/nginx.conf /etc/nginx/conf.d/default.conf
 
-RUN sed "s/\$DOMAIN_NAME/$DOMAIN_NAME/g" /etc/nginx/conf.d/default.conf
+RUN sed -i "s/\$DOMAIN_NAME/${DOMAIN_NAME}/g" /etc/nginx/conf.d/default.conf
 
 # Start NGINX Server
 CMD ["nginx", "-g", "daemon off;"]
