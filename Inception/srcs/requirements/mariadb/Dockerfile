@@ -3,7 +3,7 @@ FROM debian:bullseye
 
 # mariadb-client is not needed if you are not planning to pass commands manually
 RUN apt update && \
-    apt install -y mariadb-server mariadb-cliebt && \
+    apt install -y mariadb-server mariadb-client && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
