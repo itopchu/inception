@@ -23,4 +23,6 @@ RUN chmod +x /usr/local/bin/configure.sh
 # Copy database settings
 COPY conf/my.cnf /etc/mysql/my.cnf
 
+USER mysql
+
 ENTRYPOINT [ "sh", "/usr/local/bin/configure.sh" ]

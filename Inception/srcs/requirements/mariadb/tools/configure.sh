@@ -21,14 +21,13 @@ if [ ! -d "/var/lib/mysql/"$MYSQL_DATABASE ]; then
     # Grant all privileges on all databases to the root user, allowing them to grant privileges to other users
 	echo "GRANT ALL PRIVILEGES ON *.* TO 'root'@localhost IDENTIFIED BY '$MYSQL_ROOT_PASSWORD' WITH GRANT OPTION;" >> tmp.sql
 
-    # Create a new database named 'wordpress' if it doesn't already exist
-    echo "CREATE DATABASE IF NOT EXISTS wordpress;" >> tmp.sql
-
     # Flush the MySQL privileges to apply the changes made by the GRANT statements
   	echo "FLUSH PRIVILEGES;" >> tmp.sql
 
     # Execute SQL commands using MariaDB client
+    service mariadb start
 	mariadb < tmp.sql
+    service mariadb stop
 
     # Remove temporary file
     rm -f tmp.sql

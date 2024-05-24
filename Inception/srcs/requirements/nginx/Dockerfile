@@ -5,6 +5,7 @@ FROM debian:bullseye
 EXPOSE 443
 
 RUN apt-get update && \
+    apt upgrade -y && \
     apt-get install -y nginx openssl
 
 # clean memory a bit
