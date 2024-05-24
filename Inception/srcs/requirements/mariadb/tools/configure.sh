@@ -6,12 +6,14 @@ set -e
 # Check if given database already exists
 if [ ! -d "/var/lib/mysql/"$MYSQL_DATABASE ]; then
     # Create necessary tables and specify user
-	mariadb-install-db --user=$MYSQL_USER
+	mariadb-install-db --user=mysql
 
     # Write settings into temporary file
 
+    echo "CREATE DATABASE IF NOT EXISTS '$MYSQL_DATABASE';" > tmp.sql
+
     # Create a MySQL user with the provided username and password, allowing connections from any host ('%')
-	echo "CREATE USER '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD';" > tmp.sql
+	echo "CREATE USER '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD';" >> tmp.sql
 
     # Grant all privileges on all databases to the newly created user, allowing them to grant privileges to other users
 	echo "GRANT ALL PRIVILEGES ON *.* TO '$MYSQL_USER'@'%' WITH GRANT OPTION;" >> tmp.sql
@@ -25,14 +27,12 @@ if [ ! -d "/var/lib/mysql/"$MYSQL_DATABASE ]; then
     # Flush the MySQL privileges to apply the changes made by the GRANT statements
   	echo "FLUSH PRIVILEGES;" >> tmp.sql
 
-    # Start MariaDB temporary to pass sql file
-	service mariadb start
+    # Execute SQL commands using MariaDB client
 	mariadb < tmp.sql
-	service mariadb stop
 
     # Remove temporary file
     rm -f tmp.sql
 fi
 
 # Start MariaDB server daemon
-mariadbd --user=$MYSQL_USER
+mariadbd --user=mysql
