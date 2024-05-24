@@ -8,11 +8,11 @@ all: volume security certs build up
 
 build:
 	@echo "Building " $(NAME) "."
-	docker-compose -f $(COMPOSE_FILE) -p $(NAME) build
+	docker-compose -f $(COMPOSE_FILE) --env-file $(ENV_FILE) -p $(NAME) build
 
 up:
 	@echo "Starting " $(NAME) "."
-	docker-compose -f $(COMPOSE_FILE) -p $(NAME) up -d
+	docker-compose -f $(COMPOSE_FILE) --env-file $(ENV_FILE) -p $(NAME) up -d
 
 stop:
 	@echo "Stopping " $(NAME) "."
