@@ -8,10 +8,6 @@ RUN apt-get update && \
     apt upgrade -y && \
     apt-get install -y nginx openssl
 
-# clean memory a bit
-RUN apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
 RUN mkdir -p /var/www/wordpress && \
     mkdir -p /run/nginx && \
     mkdir -p /etc/nginx/ssl && chmod 700 /etc/nginx/ssl
@@ -25,7 +21,7 @@ COPY ./tools/index.html /var/www/html
 
 COPY ./conf/nginx.conf /etc/nginx/conf.d/default.conf
 
-RUN sed -i "s/\$DOMAIN_NAME/${DOMAIN_NAME}/g" /etc/nginx/conf.d/default.conf
+RUN sed -i "s/DOMAIN_NAME/${DOMAIN_NAME}/g" /etc/nginx/conf.d/default.conf
 
 # Start NGINX Server
 CMD ["nginx", "-g", "daemon off;"]

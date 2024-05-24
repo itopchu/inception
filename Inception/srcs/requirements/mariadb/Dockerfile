@@ -3,26 +3,17 @@ FROM debian:bullseye
 
 # mariadb-client is not needed if you are not planning to pass commands manually
 RUN apt update && \
-    apt install -y mariadb-server mariadb-client && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    apt install -y mariadb-server
 
 # Port for connection
 EXPOSE 3306
 
-# Create and allow UNIX socket folder
-RUN mkdir -p /var/run/mysqld && \
-	chmod 755 /var/run/mysqld
-
 # Copy script in executable path
-COPY tools/configure.sh /usr/local/bin/
-
+COPY tools/configure.sh /tmp/
 # Give execution permission
-RUN chmod +x /usr/local/bin/configure.sh
+RUN chmod +x /tmp/configure.sh
 
 # Copy database settings
-COPY conf/my.cnf /etc/mysql/my.cnf
+COPY conf/50-server.cnf /etc/mysql/50-server.cnf
 
-USER mysql
-
-ENTRYPOINT [ "sh", "/usr/local/bin/configure.sh" ]
+ENTRYPOINT [ "sh", "/tmp/configure.sh" ]
