@@ -16,6 +16,9 @@ RUN apt-get update \
     mariadb-client \
     && apt-get clean
 
+# Create directory for WordPress
+RUN mkdir -p /var/www/wordpress
+
 # Download and set up WordPress
 RUN cd /tmp && \
     wget https://wordpress.org/latest.tar.gz && \
@@ -23,9 +26,11 @@ RUN cd /tmp && \
     wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
     chmod +x wp-cli.phar && mv wp-cli.phar /usr/local/bin/wp && \
     rm latest.tar.gz && \
-    mkdir -p /run/php && \
-	chown -R www-data:www-data /var/www/wordpress && \
-	chmod -R 755 /var/www/wordpress
+    mkdir -p /run/php
+
+# Set permissions for WordPress directory
+RUN chown -R www-data:www-data /var/www/wordpress && \
+    chmod -R 755 /var/www/wordpress
 
 # Copy PHP-FPM pool configuration
 COPY ./conf/www.conf /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
