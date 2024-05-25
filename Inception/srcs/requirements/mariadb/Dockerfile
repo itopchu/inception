@@ -1,24 +1,12 @@
-# base image for docker
 FROM debian:bullseye
 
-# mariadb-client is not needed if you are not planning to pass commands manually
 RUN apt update && \
     apt install -y mariadb-server
 
-# Port for connection
-EXPOSE 3306
+COPY tools/configure.sh /tmp/
 
-# Set proper permissions for directories
-RUN mkdir -p /var/run/mysqld && \
-	chmod 777 /var/run/mysqld
-    
-# Copy database settings
-COPY conf/my.cnf /etc/mysql/my.cnf
+COPY conf/50-server.cnf	/etc/mysql/mariadb.conf.d/50-server.cnf
 
-# Copy the initialization script
-COPY tools/configure.sh /usr/local/bin/
-RUN chmod 777 /usr/local/bin/configure.sh
+RUN chmod +x /tmp/database.sh
 
-# Run the initialization script
-ENTRYPOINT ["/usr/local/bin/configure.sh"]
-
+CMD ["./tmp/database.sh"]

@@ -4,7 +4,7 @@ COMPOSE_DIR = ./srcs
 COMPOSE_FILE = $(COMPOSE_DIR)/docker-compose.yml
 ENV_FILE = $(COMPOSE_DIR)/.env
 
-all: volume security certs build up
+all: volume certs build up
 
 build:
 	@echo "Building " $(NAME) "."
@@ -43,14 +43,9 @@ volume:
 	@echo "Creating volumes " $(NAME) "."
 	@mkdir -p /home/$(USER)/data/{mariadb/,wordpress/}
 
-security:
-#	@echo "Receiving security keys " $(NAME) "."
-#	chmod +x ./srcs/requirements/tools/security.sh
-#	./srcs/requirements/tools/security.sh $(USER)
-
 certs:
 	@echo "Generating certificates " $(NAME) "."
 	chmod +x ./srcs/requirements/tools/certificate.sh
 	./srcs/requirements/tools/certificate.sh $(USER)
 
-.PHONY: all build up stop down clean prune remake restart logs volume security certs
+.PHONY: all build up stop down clean prune remake restart logs volume certs
