@@ -3,30 +3,36 @@
 # Initialize the database if it doesn't exist
 if [ ! -d "/var/lib/mysql/mysql" ]; then
 
-    chown -R mysql:mysql /var/lib/mysql
+    # Start MariaDB service
+    service mysql start
 
-    # Initialize the database
-    mysql_install_db --basedir=/usr --datadir=/var/lib/mysql --user=mysql --rpm
+    # Set root password
+    mysqladmin -u root password "${MYSQL_ROOT_PASSWORD}"
 
-    tfile=`mktemp`
-    if [ ! -f "$tfile" ]; then
-        return 1
-    fi
+    # Remove the temporary password for root user
+    mysql -u root -p"${MYSQL_ROOT_PASSWORD}" -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';"
+
+    # Remove anonymous users and disallow remote root login
+    mysql -u root -p"${MYSQL_ROOT_PASSWORD}" -e "DELETE FROM mysql.user WHERE User='';"
+    mysql -u root -p"${MYSQL_ROOT_PASSWORD}" -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');"
+    mysql -u root -p"${MYSQL_ROOT_PASSWORD}" -e "DROP DATABASE IF EXISTS test;"
+    mysql -u root -p"${MYSQL_ROOT_PASSWORD}" -e "DELETE FROM mysql.db WHERE Db='test';"
+
+    # Stop MariaDB service
+    service mysql stop
 fi
 
 # Create the WordPress database and user if not already created
 if [ ! -d "/var/lib/mysql/$MYSQL_NAME" ]; then
 
+    # Start MariaDB service
+    service mysql start
+
     cat << EOF > /tmp/create_db.sql
 USE mysql;
 FLUSH PRIVILEGES;
-DELETE FROM mysql.user WHERE User='';
-DROP DATABASE IF EXISTS test;
-DELETE FROM mysql.db WHERE Db='test';
-DELETE FROM mysql.user WHERE User='${MYSQL_ROOT}' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
-ALTER USER '${MYSQL_ROOT}'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
-CREATE DATABASE ${MYSQL_NAME} CHARACTER SET utf8 COLLATE utf8_general_ci;
-CREATE USER '${MYSQL_USR}'@'%' IDENTIFIED BY '${MYSQL_PWD}';
+CREATE DATABASE IF NOT EXISTS ${MYSQL_NAME} CHARACTER SET utf8 COLLATE utf8_general_ci;
+CREATE USER IF NOT EXISTS '${MYSQL_USR}'@'%' IDENTIFIED BY '${MYSQL_PWD}';
 GRANT ALL PRIVILEGES ON ${MYSQL_NAME}.* TO '${MYSQL_USR}'@'%';
 FLUSH PRIVILEGES;
 
@@ -49,9 +55,12 @@ SELECT ID, 'wp_capabilities', 'a:1:{s:10:"subscriber";s:1:"1";}' FROM wp_users W
 EOF
 
     # Run the SQL script to initialize the database
-    /usr/bin/mysqld --defaults-file=/etc/mysql/my.cnf --user=mysql --bootstrap < /tmp/create_db.sql
+    mysql --defaults-file=/etc/mysql/my.cnf --user=root --password="${MYSQL_ROOT_PASSWORD}" < /tmp/create_db.sql
     rm -f /tmp/create_db.sql
+
+    # Stop MariaDB service
+    service mysql stop
 fi
 
 # Start the MariaDB service normally
-exec /usr/bin/mysqld --defaults-file=/etc/mysql/my.cnf --user=mysql --console
+exec mysqld --defaults-file=/etc/mysql/my.cnf --user=mysql --console
