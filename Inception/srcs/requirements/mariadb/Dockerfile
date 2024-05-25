@@ -21,3 +21,4 @@ RUN chmod 777 /usr/local/bin/configure.sh
 
 # Run the initialization script
 ENTRYPOINT ["/usr/local/bin/configure.sh"]
+
