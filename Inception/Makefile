@@ -41,7 +41,8 @@ logs:
 
 volume:
 	@echo "Creating volumes " $(NAME) "."
-	@mkdir -p /home/$(USER)/data/{mariadb/,wordpress/}
+	@mkdir -p /home/$(USER)/data/mariadb/
+	@mkdir -p /home/$(USER)/data/wordpress/
 
 certs:
 	@echo "Generating certificates " $(NAME) "."
