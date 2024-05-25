@@ -1,43 +1,31 @@
 USER = itopchu
 NAME = inception
 COMPOSE_DIR = ./srcs
-COMPOSE_FILE = $(COMPOSE_DIR)/docker-compose.yml
 ENV_FILE = $(COMPOSE_DIR)/.env
 
-all: volume certs build up
-
-build:
-	@echo "Building " $(NAME) "."
-	docker-compose -f $(COMPOSE_FILE) --env-file $(ENV_FILE) -p $(NAME) build
+all: volume certs up
 
 up:
 	@echo "Starting " $(NAME) "."
-	docker-compose -f $(COMPOSE_FILE) --env-file $(ENV_FILE) -p $(NAME) up -d
+	cd srcs && docker compose up --build
 
 stop:
 	@echo "Stopping " $(NAME) "."
-	docker-compose -f $(COMPOSE_FILE) -p $(NAME) stop
+	cd srcs && docker-compose stop
 
 down:
 	@echo "Stopping and removing " $(NAME) " containers and networks."
-	docker-compose -f $(COMPOSE_FILE) -p $(NAME) down
+	cd srcs && docker compose down --rmi all; clear
 
-clean:
-	@echo "Stopping and removing " $(NAME) " containers, networks, images, and volumes."
-	docker-compose -f $(COMPOSE_FILE) -p $(NAME) down --volumes --remove-orphans
-
-prune: clean
+prune: down
 	@echo "Pruning unused Docker resources..."
 	@docker system prune --all --force --volumes
 
-remake: clean build up
+remake: down up
 	@echo "Rebuilt and restarted " $(NAME) " containers."
 
 restart: stop up
 	@echo "Restarted " $(NAME) " containers."
-
-logs:
-	docker-compose -f $(COMPOSE_FILE) logs -f
 
 volume:
 	@echo "Creating volumes " $(NAME) "."
@@ -49,4 +37,4 @@ certs:
 	chmod +x ./srcs/requirements/tools/certificate.sh
 	./srcs/requirements/tools/certificate.sh $(USER)
 
-.PHONY: all build up stop down clean prune remake restart logs volume certs
+.PHONY: all up stop down prune remake restart volume certs

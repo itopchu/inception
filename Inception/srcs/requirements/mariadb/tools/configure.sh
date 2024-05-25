@@ -2,7 +2,7 @@
 
 mysqld_safe &
 
-mariadb -u root <<EOF
+mariadb -u root << EOF
 CREATE DATABASE $DB_NAME;
 CREATE USER $DB_USER@'%' IDENTIFIED BY '$DB_USER_PWD';
 GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO $DB_USER@'%';
