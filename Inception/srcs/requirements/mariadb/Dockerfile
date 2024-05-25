@@ -9,4 +9,4 @@ COPY conf/50-server.cnf	/etc/mysql/mariadb.conf.d/50-server.cnf
 
 RUN chmod +x /tmp/configure.sh
 
-CMD ["./tmp/configure.sh"]
+CMD ["/tmp/configure.sh"]
