@@ -48,6 +48,8 @@ services:
     volumes:
      - wp:/var/www/html
     build: ./requirements/nginx/
+    environment:
+      DOMAIN_NAME: ${DOMAIN_NAME}
 
 networks:
   webserv:

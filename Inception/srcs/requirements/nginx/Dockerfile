@@ -4,6 +4,8 @@ RUN apt-get update \
     && apt-get install -y nginx \
     && mkdir -p /etc/nginx/ssl
 
+ARG DOMAIN_NAME
+
 COPY tools/*.crt /etc/nginx/ssl/
 COPY tools/*.key /etc/nginx/ssl/
 COPY conf/nginx.conf /etc/nginx/conf.d/default.conf
