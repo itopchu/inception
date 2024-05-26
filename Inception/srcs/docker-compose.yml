@@ -15,7 +15,6 @@ services:
       - db:/var/lib/mysql
     build: ./requirements/mariadb/
 
-
   wordpress:
     container_name: wordpress
     image: wordpress
@@ -45,6 +44,7 @@ services:
       - webserv
     depends_on:
      - wordpress
+     - mariadb
     volumes:
      - wp:/var/www/html
     build: ./requirements/nginx/

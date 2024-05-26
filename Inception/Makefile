@@ -4,37 +4,21 @@ COMPOSE_DIR = ./srcs
 COMPOSE_FILE = $(COMPOSE_DIR)/docker-compose.yml
 ENV_FILE = $(COMPOSE_DIR)/.env
 
-all: volume certs build up
+all: volume certs up
 
 build:
-	@echo "Building " $(NAME) "."
-	docker-compose -f $(COMPOSE_FILE) --env-file $(ENV_FILE) -p $(NAME) build
+    cd srcs/ && docker-compose build
 
 up:
-	@echo "Starting " $(NAME) "."
-	docker-compose -f $(COMPOSE_FILE) --env-file $(ENV_FILE) -p $(NAME) up -d
-
-stop:
-	@echo "Stopping " $(NAME) "."
-	docker-compose -f $(COMPOSE_FILE) -p $(NAME) stop
+    cd srcs/ && docker-compose build && docker-compose up -d
 
 down:
-	@echo "Stopping and removing " $(NAME) " containers and networks."
-	docker-compose -f $(COMPOSE_FILE) -p $(NAME) down
+    cd srcs/ && docker-compose down
 
 clean:
-	@echo "Stopping and removing " $(NAME) " containers, networks, images, and volumes."
-	docker-compose -f $(COMPOSE_FILE) -p $(NAME) down --volumes --remove-orphans
+    cd srcs/ && docker-compose down && docker-compose rm -f && docker volume prune -f
 
-prune: clean
-	@echo "Pruning unused Docker resources..."
-	@docker system prune --all --force --volumes
-
-remake: clean build up
-	@echo "Rebuilt and restarted " $(NAME) " containers."
-
-restart: stop up
-	@echo "Restarted " $(NAME) " containers."
+re: clean up
 
 volume:
 	@echo "Creating volumes " $(NAME) "."
