@@ -6,7 +6,8 @@ RUN apt-get update && apt-get install -y \
     && tar -xzf latest.tar.gz \
     && mkdir -p /var/www/html/ \
     && mv wordpress /var/www/html \
-    && chown -R www-data:www-data /var/www/html
+    && chown -R www-data:www-data /var/www/html \
+    && mkdir -p /run/php
 
 COPY conf/wp-config.php /var/www/html/wp-config.php
 COPY tools/index.html /var/www/html/index.html

@@ -1,7 +1,9 @@
 FROM debian:bullseye
 
-RUN apt update && \
-    apt install -y mariadb-server
+RUN apt update \
+    && apt install -y mariadb-server \
+    && mkdir -p /var/run/mysqld \
+    && chown -R mysql:mysql /var/run/mysqld
 
 COPY conf/my.cnf /etc/mysql/my.cnf
 
