@@ -2,11 +2,11 @@
 
 if [ ! -f "/var/www/wordpress/wp-config.php" ]; then
 
-sed -i "s/username_here/$DB_USER/g" wordpress/wp-config-sample.php
-sed -i "s/password_here/$DB_USER_PWD/g" wordpress/wp-config-sample.php
-sed -i "s/localhost/mariadb/g" wordpress/wp-config-sample.php
-sed -i "s/database_name_here/$DB_NAME/g" wordpress/wp-config-sample.php
-cp wordpress/wp-config-sample.php wordpress/wp-config.php
+sed -i "s/username_here/$DB_USER/g" /var/www/wordpress/wp-config-sample.php
+sed -i "s/password_here/$DB_USER_PWD/g" /var/www/wordpress/wp-config-sample.php
+sed -i "s/localhost/mariadb/g" /var/www/wordpress/wp-config-sample.php
+sed -i "s/database_name_here/$DB_NAME/g" /var/www/wordpress/wp-config-sample.php
+cp /var/www/wordpress/wp-config-sample.php /var/www/wordpress/wp-config.php
 
 wp core install \
 	--allow-root \

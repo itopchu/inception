@@ -28,7 +28,7 @@ services:
       - website
       - webserv
     volumes:
-      - wp:/var/www/html
+      - wp:/var/www/wordpress
     build: ./requirements/wordpress/
     depends_on:
       - mariadb
@@ -46,7 +46,7 @@ services:
     depends_on:
      - wordpress
     volumes:
-     - wp:/var/www/html
+     - wp:/var/www/wordpress
     build: ./requirements/nginx/
 
 networks:

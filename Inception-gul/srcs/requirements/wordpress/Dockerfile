@@ -22,4 +22,4 @@ COPY ./conf/www.conf /etc/php/7.4/fpm/pool.d/www.conf
 COPY /tools/wp.sh /tmp/
 RUN chmod +x /tmp/wp.sh
 
-CMD ["/tmp/wp.sh"]
+CMD ["sh", "/tmp/wp.sh"]

@@ -14,4 +14,4 @@ COPY tools/configure.sh /tmp/
 
 RUN chmod +x /tmp/configure.sh
 
-CMD ["/tmp/configure.sh"]
+ENTRYPOINT ["/tmp/configure.sh"]
