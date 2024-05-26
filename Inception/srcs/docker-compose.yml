@@ -47,9 +47,10 @@ services:
      - mariadb
     volumes:
      - wp:/var/www/html
-    build: ./requirements/nginx/
-    environment:
-      DOMAIN_NAME: ${DOMAIN_NAME}
+    build:
+      context: ./requirements/nginx/
+      args:
+        - DOMAIN_NAME: ${DOMAIN_NAME}
 
 networks:
   webserv:
