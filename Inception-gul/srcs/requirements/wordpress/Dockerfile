@@ -1,12 +1,10 @@
 # base image for docker
 FROM debian:bullseye
 
-COPY /tools/wp.sh /tmp/
 
+# sed -i 's#listen = /run/php/php7.4-fpm.sock#listen = 0.0.0.0:9000#' /etc/php/7.4/fpm/pool.d/www.conf && \
 RUN apt-get update && apt install -y curl tar wget && \
-    apt install -y php php-mysql php-fpm mariadb-client && \
-    sed -i 's#listen = /run/php/php7.4-fpm.sock#listen = 0.0.0.0:9000#' /etc/php/7.4/fpm/pool.d/www.conf && \
-    chmod +x /tmp/wp.sh
+    apt install -y php7.4-fpm php-mysql
 
 WORKDIR /var/www
 
@@ -20,5 +18,8 @@ RUN wget https://wordpress.org/latest.tar.gz && \
     chmod -R 755 /var/www/wordpress 
 
 COPY ./conf/www.conf /etc/php/7.4/fpm/pool.d/www.conf
+
+COPY /tools/wp.sh /tmp/
+RUN chmod +x /tmp/wp.sh
 
 CMD ["/tmp/wp.sh"]
