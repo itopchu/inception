@@ -1,22 +1,19 @@
 USER = itopchu
 NAME = inception
-COMPOSE_DIR = ./srcs
-COMPOSE_FILE = $(COMPOSE_DIR)/docker-compose.yml
-ENV_FILE = $(COMPOSE_DIR)/.env
 
 all: volume certs up
 
 build:
-    cd srcs/ && docker-compose build
+    cd srcs && docker-compose build
 
 up:
-    cd srcs/ && docker-compose build && docker-compose up -d
+    cd srcs && docker-compose build && docker-compose up -d
 
 down:
-    cd srcs/ && docker-compose down
+    cd srcs && docker-compose down
 
 clean:
-    cd srcs/ && docker-compose down && docker-compose rm -f && docker volume prune -f
+    cd srcs && docker-compose down && docker-compose rm -f && docker volume prune -f
 
 re: clean up
 
