@@ -1,10 +1,9 @@
 Virtual machine is 'debian-11.9.0-amd64-netinst'
 
   System:
-    40GB disk size
-    8GB RAM
-    4CPU
-    -Floppy +Hard Disk +Network
+    8GB disk size
+    2GB RAM
+    1CPU
     "Enable EFI (special OSes only)"
   Display:
     memory 64MB, VMSVA, 3D Acceleration
