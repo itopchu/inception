@@ -69,7 +69,6 @@ Navigate to the scripts folder and run the script `00_main.sh`:
 After the VM setup, connect to the OS terminal:
 `ssh root@localhost -p 2222`
 
-
 ### Update .env File
 
 Update the .env file located at `~/Inception/srcs/requirements/.env` with your specific configuration.
