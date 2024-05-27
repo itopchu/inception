@@ -38,6 +38,43 @@ Before starting, ensure you have a virtual machine setup. Below are the steps fo
    - Software Selection: Unselect everything except 'SSH server and essential'.
    - GRUB Installation: Install GRUB to the primary drive (/dev/sda) and continue.
 
-### Connecting to the VM and Installing Git
+### Usage Instructions
+
+1. **Install Git**
+   - apt-get install git
+
+2. **Repository Structure**
+These scripts automate the environment setup before running docker-compose.
+   - 00_main.sh
+   - 01_setup_packages.sh
+   - 02_setup_ssh_config.sh
+   - 03_allow_ports.sh
+   - 04_add_user_to_groups.sh
+   - 05_add_domain_for_user.sh
+   - 06_create_inception_files.sh
+
+Folder `Inception` contains all the necessary files for the project.
+
+3. **Clone the Repository**
+
+Clone this repository into `/home/$USER`
+
+Navigate to the scripts folder and run the script `00_main.sh`:
+   - cd /home/$USER/inception_project/scripts
+   - ./00_main.sh
+
+
+### Connecting to the VM with SSH
 
 After the VM setup, connect to the OS terminal:
+`ssh root@localhost -p 2222`
+
+
+### Update .env File
+
+Update the .env file located at `~/Inception/srcs/requirements/.env` with your specific configuration.
+
+## Conclusion
+By following these instructions, you will set up a robust system administration project using Docker. This project not only helps you understand containerization but also equips you with practical skills for setting up and managing virtual environments.
+
+Feel free to reach out for any clarifications or further assistance. Happy coding!
