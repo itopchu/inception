@@ -64,14 +64,16 @@ Navigate to the scripts folder and run the script `00_main.sh`:
    - ./00_main.sh
 
 
-### Connecting to the VM with SSH
+## Connecting to the VM with SSH
 
 After the VM setup, connect to the OS terminal:
 `ssh root@localhost -p 2222`
 
-### Update .env File
+## Update Information
 
-Update the .env file located at `~/Inception/srcs/requirements/.env` with your specific configuration.
+To have a proper project please do not forget to update:
+   - ~/Inception/Makefile
+   - ~/Inception/srcs/requirements/.env
 
 ## Conclusion
 By following these instructions, you will set up a robust system administration project using Docker. This project not only helps you understand containerization but also equips you with practical skills for setting up and managing virtual environments.
