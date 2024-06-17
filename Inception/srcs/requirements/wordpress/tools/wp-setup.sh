@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Change to the WordPress directory
+cd /var/www/html/ || exit
+
 # Ensure WordPress is installed and configured
 wp core install --url=${DOMAIN_NAME} --title=${WP_TITLE} --admin_user=${WP_ADMIN} --admin_password=${WP_ADMIN_PWD} --admin_email=${WP_ADMIN_EMAIL} --skip-email
 
