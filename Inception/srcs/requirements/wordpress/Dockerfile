@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
     && mkdir -p /run/php
 
 COPY conf/wp-config.php /var/www/html/wp-config.php
-COPY tools/index.html /var/www/html/index.html
+# COPY tools/index.html /var/www/html/index.html
 COPY tools/wp-setup.sh /usr/local/bin/wp-setup.sh
 
 RUN chmod +x /usr/local/bin/wp-setup.sh
