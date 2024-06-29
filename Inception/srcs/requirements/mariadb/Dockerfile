@@ -9,6 +9,6 @@ COPY tools/db-setup.sh /tmp/db-setup.sh
 
 RUN chmod +x /tmp/db-setup.sh
 
-ENTRYPOINT ["/tmp/config.sh"]
+ENTRYPOINT ["/tmp/db-setup.sh"]
 
 CMD ["mysqld", "--bind-address=0.0.0.0"]
