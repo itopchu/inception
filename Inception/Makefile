@@ -7,17 +7,17 @@ DATA = /home/$(USER)/data
 all: volume certs up
 
 build:
-    docker-compose --env-file $(SRCS)/.env -f $(SRCS)/docker-compose.yml build
+	docker-compose --env-file $(SRCS)/.env -f $(SRCS)/docker-compose.yml build
 
 up: build
-    docker-compose --env-file $(SRCS)/.env -f $(SRCS)/docker-compose.yml up -d
+	docker-compose --env-file $(SRCS)/.env -f $(SRCS)/docker-compose.yml up -d
 
 down:
-    docker-compose --env-file $(SRCS)/.env -f $(SRCS)/docker-compose.yml down
+	docker-compose --env-file $(SRCS)/.env -f $(SRCS)/docker-compose.yml down
 
 clean: down
-    docker-compose --env-file $(SRCS)/.env -f $(SRCS)/docker-compose.yml rm -f
-    docker volume prune -f
+	docker-compose --env-file $(SRCS)/.env -f $(SRCS)/docker-compose.yml rm -f
+	docker volume prune -f
 
 re: clean up
 
