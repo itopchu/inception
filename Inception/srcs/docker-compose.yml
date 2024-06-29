@@ -7,10 +7,8 @@ services:
     restart: always
     env_file:
       - .env
-    ports:
-      - "3306:3306"
     networks:
-      - website
+      - webserv
     volumes:
       - db:/var/lib/mysql
     build: ./requirements/mariadb/
@@ -21,10 +19,7 @@ services:
     restart: always
     env_file:
       - .env
-    ports:
-      - "9000:9000"
     networks:
-      - website
       - webserv
     volumes:
       - wp:/var/www/html
@@ -54,8 +49,6 @@ services:
 
 networks:
   webserv:
-    driver: bridge
-  website:
     driver: bridge
 
 volumes:
