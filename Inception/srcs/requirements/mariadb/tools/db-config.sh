@@ -39,9 +39,10 @@ else
 
  	mysqladmin -u root -p$DB_ROOT_PASSWORD shutdown
 
+	echo "Database created"
+
 fi
 
-echo "Database created"
 echo "Starting MariaDB..."
 
 exec "$@"

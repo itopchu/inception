@@ -14,10 +14,10 @@ RUN apt-get update && apt-get install -y \
 RUN mkdir /run/php/ && chmod 755 /run/php/
 
 COPY ./conf/www.conf /etc/php/7.4/fpm/pool.d/
-COPY ./tools/config.sh /tmp/
+COPY ./tools/wp-setup.sh /tmp/
 
-RUN chmod +x /tmp/config.sh
+RUN chmod +x /tmp/wp-setup.sh
 
-ENTRYPOINT ["/tmp/config.sh"]
+ENTRYPOINT ["/tmp/wp-setup.sh"]
 
 CMD ["php-fpm7.4", "-F"]
