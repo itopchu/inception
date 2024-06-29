@@ -4,7 +4,12 @@ sleep 5
 
 echo "Configuring MariaDB..."
 
-if [ ! -d "/var/lib/mysql/$DB_NAME" ];then
+if [ -d "/var/lib/mysql/$DB_NAME" ];
+
+then
+	echo "Database already exists"
+
+else
 	service mariadb start
 
 	sleep 1
@@ -33,10 +38,10 @@ if [ ! -d "/var/lib/mysql/$DB_NAME" ];then
 	EOF
 
  	mysqladmin -u root -p$DB_ROOT_PASSWORD shutdown
-	echo "Database created"
 
 fi
 
+echo "Database created"
 echo "Starting MariaDB..."
 
 exec "$@"
