@@ -58,14 +58,12 @@ networks:
 volumes:
   wp:
     driver: local
-    name: wp
     driver_opts:
       o: bind
       type: none
       device: /home/${USER_NAME}/data/wordpress
   db:
     driver: local
-    name: db
     driver_opts:
       o: bind
       type: none
