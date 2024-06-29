@@ -40,7 +40,7 @@ else
  	mysqladmin -u root -p$DB_ROOT_PASSWORD shutdown
 
 	echo "Database created"
-
+	
 fi
 
 echo "Starting MariaDB..."
