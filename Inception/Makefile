@@ -7,16 +7,16 @@ DATA = /home/$(USER)/data
 all: volume certs up
 
 build:
-    cd $(SRCS) && docker-compose build
+    docker-compose -f $(SRCS)/docker-compose.yml build
 
 up: build
-    cd $(SRCS) && docker-compose up -d
+    docker-compose -f $(SRCS)/docker-compose.yml up -d
 
 down:
-    cd $(SRCS) && docker-compose down
+    docker-compose -f $(SRCS)/docker-compose.yml down
 
 clean: down
-    cd $(SRCS) && docker-compose rm -f
+    docker-compose -f $(SRCS)/docker-compose.yml rm -f
     docker volume prune -f
 
 re: clean up
