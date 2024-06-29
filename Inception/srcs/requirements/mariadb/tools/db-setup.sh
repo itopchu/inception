@@ -1,7 +1,43 @@
 #!/bin/bash
-mysql -uroot -p${MYSQL_ROOT_PASSWORD} <<EOF
-CREATE DATABASE IF NOT EXISTS ${MYSQL_DATABASE};
-CREATE USER IF NOT EXISTS '${WORDPRESS_DB_USER}'@'%' IDENTIFIED BY '${WORDPRESS_DB_PASSWORD}';
-GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO '${WORDPRESS_DB_USER}'@'%';
+
+sleep 5
+
+echo "Configuring MariaDB..."
+
+if [ ! -d "/var/lib/mysql/$DB_NAME" ]; then
+
+    service mariadb start || systemctl start mariadb
+
+    sleep 1
+
+    mysql_secure_installation <<EOF
+Y
+$DB_ROOT_PWD
+$DB_ROOT_PWD
+Y
+Y
+Y
+Y
+EOF
+
+    echo "MariaDB configured"
+    echo "Creating Database..."
+
+    mysql -u root -p"$DB_ROOT_PWD" <<EOF
+CREATE DATABASE IF NOT EXISTS $DB_NAME;
+CREATE USER IF NOT EXISTS '$DB_USER'@'%' IDENTIFIED BY '$DB_USER_PWD';
+GRANT ALL PRIVILEGES ON *.* TO '$DB_USER'@'%';
+FLUSH PRIVILEGES;
+ALTER USER 'root'@'localhost' IDENTIFIED BY '$DB_ROOT_PWD';
 FLUSH PRIVILEGES;
 EOF
+
+    mysqladmin -u root -p"$DB_ROOT_PWD" shutdown
+    
+    echo "Database created"
+
+fi
+
+echo "Starting MariaDB..."
+
+exec "$@"

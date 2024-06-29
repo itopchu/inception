@@ -7,8 +7,10 @@ services:
     restart: always
     env_file:
       - .env
+    ports:
+      - "3306:3306"
     networks:
-      - webserv
+      - inception
     volumes:
       - db:/var/lib/mysql
     build: ./requirements/mariadb/
@@ -19,10 +21,12 @@ services:
     restart: always
     env_file:
       - .env
+    ports:
+      - "9000:9000"
     networks:
-      - webserv
+      - inception
     volumes:
-      - wp:/var/www/html
+      - wp:${WP_PATH}
     build: ./requirements/wordpress/
     depends_on:
       - mariadb
@@ -36,30 +40,32 @@ services:
     ports:
       - "443:443"
     networks:
-      - webserv
+      - inception
     depends_on:
      - wordpress
      - mariadb
     volumes:
-     - wp:/var/www/html
+     - wp:${WP_PATH}
     build:
       context: ./requirements/nginx/
       args:
         DOMAIN_NAME: ${DOMAIN_NAME}
 
 networks:
-  webserv:
+  inception:
     driver: bridge
 
 volumes:
   wp:
     driver: local
+    name: wp
     driver_opts:
       o: bind
       type: none
       device: /home/${USER_NAME}/data/wordpress
   db:
     driver: local
+    name: db
     driver_opts:
       o: bind
       type: none
