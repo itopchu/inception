@@ -2,16 +2,15 @@ FROM debian:bullseye
 
 EXPOSE 443
 
-RUN apt-get update \
-    && apt-get install -y nginx \
-    && mkdir -p /etc/nginx/ssl
+RUN apt-get update && apt-get install -y \
+	nginx \
+	openssl
 
-ARG DOMAIN_NAME
+COPY ./conf/nginx.conf /etc/nginx/sites-enabled/
+COPY ./tools/create_cert.sh /tmp/
 
-COPY tools/*.crt /etc/nginx/ssl/
-COPY tools/*.key /etc/nginx/ssl/
-COPY conf/nginx.conf /etc/nginx/conf.d/default.conf
-RUN sed -i "s/\${DOMAIN_NAME}/${DOMAIN_NAME}/g" /etc/nginx/conf.d/default.conf
+RUN chmod +x /tmp/create_cert.sh
 
+ENTRYPOINT ["/tmp/create_cert.sh"]
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["nginx", "-g", "daemon off;"] 

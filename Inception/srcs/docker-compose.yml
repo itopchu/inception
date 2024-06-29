@@ -1,70 +1,60 @@
-version: "3.3"
-
-services:
-  mariadb:
-    container_name: mariadb
-    image: mariadb
-    restart: always
-    env_file:
-      - .env
-    ports:
-      - "3306:3306"
-    networks:
-      - inception
-    volumes:
-      - db:/var/lib/mysql
-    build: ./requirements/mariadb/
-
-  wordpress:
-    container_name: wordpress
-    image: wordpress
-    restart: always
-    env_file:
-      - .env
-    ports:
-      - "9000:9000"
-    networks:
-      - inception
-    volumes:
-      - wp:${WP_PATH}
-    build: ./requirements/wordpress/
-    depends_on:
-      - mariadb
-
-  nginx:
-    container_name: nginx
-    image: nginx
-    restart: always
-    env_file:
-      - .env
-    ports:
-      - "443:443"
-    networks:
-      - inception
-    depends_on:
-     - wordpress
-     - mariadb
-    volumes:
-     - wp:${WP_PATH}
-    build:
-      context: ./requirements/nginx/
-      args:
-        DOMAIN_NAME: ${DOMAIN_NAME}
+version: "3.5"
 
 networks:
   inception:
+    name: inception
     driver: bridge
 
 volumes:
   wp:
     driver: local
+    name: wp
     driver_opts:
-      o: bind
       type: none
-      device: /home/${USER_NAME}/data/wordpress
+      o: bind
+      device: $HOME/data/wordpress
   db:
     driver: local
+    name: db
     driver_opts:
-      o: bind
       type: none
-      device: /home/${USER_NAME}/data/mariadb
+      o: bind
+      device: $HOME/data/mariadb
+
+services:
+  mariadb:
+    container_name: mariadb
+    build: ./requirements/mariadb
+    env_file:
+      - .env
+    volumes:
+      - db:/var/lib/mysql
+    networks:
+      - inception
+    restart: unless-stopped
+
+  wordpress:
+    container_name: wordpress
+    build: ./requirements/wordpress
+    env_file:
+      - .env
+    depends_on:
+      - mariadb
+    volumes:
+      - wp:/var/www/html
+    networks:
+      - inception
+    restart: unless-stopped
+
+  nginx:
+    container_name: nginx
+    build: ./requirements/nginx
+    ports:
+      - "443:443"
+    depends_on:
+      - wordpress
+    volumes:
+      - wp:/var/www/html
+    networks:
+      - inception
+    restart: unless-stopped
